@@ -103,10 +103,6 @@ if [ "on-cluster" != "${VALKEY_LOCATION}" ]; then
   # shellcheck disable=SC2005
   echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "VALKEY"))')" > "${DCD}"
 fi
-if [ "on-cluster" != "${RABBITMQ_LOCATION}" ]; then
-  # shellcheck disable=SC2005
-  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "RABBITMQ"))')" > "${DCD}"
-fi
 if [ "on-cluster" != "${DATABASE_LOCATION}" ]; then
   # shellcheck disable=SC2005
   echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "DATABASE"))')" > "${DCD}"

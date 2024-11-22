@@ -299,14 +299,6 @@ daily_rotate = {{ default "true" .LOG_DAILY_ROTATE }}
 # Expired days of log file(delete after max days), default is 7
 max_days = {{ default "7" .LOG_MAX_DAYS }}
 
-#################################### AMPQ Event Publisher ##########################
-[event_publisher]
-{{ if .AMQP_PUBLISHER }}
-enabled = {{ .AMQP_PUBLISHER }}
-rabbitmq_url = {{ .AMQP_PUBLISHER_HOST }}
-exchange = {{ .AMQP_PUBLISHER_EXCHANGE }}
-{{ end }}
-
 ;#################################### Dashboard JSON files ##########################
 [dashboards.json]
 enabled = {{ default "true" .DASHBOARD_JSON }}

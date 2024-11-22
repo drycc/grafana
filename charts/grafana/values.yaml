@@ -69,7 +69,6 @@ global:
   valkeyLocation: "on-cluster"
   grafanaLocation: "on-cluster"
   storageLocation: "on-cluster"
-  rabbitmqLocation: "on-cluster"
   databaseLocation: "on-cluster"
   passportLocation: "on-cluster"
   registryLocation: "on-cluster"

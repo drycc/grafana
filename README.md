@@ -105,9 +105,6 @@ We welcome your input! If you have feedback, please [submit an issue][issues]. I
 | <a name="log_max_lines_shift"></a> [LOG_MAX_LINES_SHIFT](#log_max_lines_shift) | 28 | Max size shift of single file, default is 28 means 1 << 28, 256MB |
 | <a name="log_daily_rotate"></a> [LOG_DAILY_ROTATE](#log_daily_rotate) | true | Segment log daily, default is true |
 | <a name="log_max_days"></a> [LOG_MAX_DAYS](#log_max_days) | 7 | Expired days of log file(delete after max days) |
-| <a name="amqp_publisher"></a> [AMQP_PUBLISHER](#amqp_publisher) | no default | Publish Events to AMQP |
-| <a name="amqp_publisher_host"></a> [AMQP_PUBLISHER_HOST](#amqp_publisher_host) | no default | RabbitMQ URL |
-| <a name="amqp_publisher_exchange"></a> [AMQP_PUBLISHER_EXCHANGE](#amqp_publisher_exchange) | no default | AMQP Publisher Exchange |
 | <a name="dashboard_json"></a> [DASHBOARD_JSON](#dashboard_json) | true | Poll a location for json files that contain dashboards |
 | <a name="dashboard_json_path"></a> [DASHBOARD_JSON_PATH](#dashboard_json_path) | /usr/share/grafana/dashboards | Location to scan for json dashboards |
 | <a name="plugins_path"></a> [PLUGINS_PATH](#plugins_path) | /var/lib/grafana/plugins | Path to where grafana can install plugins |

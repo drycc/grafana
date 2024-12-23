@@ -12,11 +12,11 @@ steps:
   image: bash
   commands:
   - make test
-  secrets:
-  - codename
-  - dev_registry
-  - drycc_registry
-  - container_pull_secrets
+  environment:
+    CODENAME:
+      from_secret: codename
+    DEV_REGISTRY:
+      from_secret: dev_registry
   when:
     event:
     - push

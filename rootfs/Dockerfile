@@ -5,7 +5,7 @@ ENV DRYCC_UID=1001 \
   DRYCC_GID=1001 \
   DRYCC_HOME_DIR=/usr/share/grafana \
   GRAFANA_VERSION="11.6.0" \
-  ENVTPL_VERSION="1.0.0" \
+  ENVTPL_VERSION="2.0.5" \
   JQ_VERSION="1.7.1"
 
 RUN groupadd drycc --gid ${DRYCC_GID} \

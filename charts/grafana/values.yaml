@@ -73,8 +73,6 @@ global:
   passportLocation: "on-cluster"
   registryLocation: "on-cluster"
   prometheusLocation: "on-cluster"
-  # Role-Based Access Control for Kubernetes >= 1.5
-  rbac: false
   ingressClass: ""
   # A domain name consists of one or more parts.
   # Periods (.) are used to separate these parts.

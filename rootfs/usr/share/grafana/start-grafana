@@ -118,13 +118,9 @@ if [ "on-cluster" != "${REGISTRY_LOCATION}" ]; then
   echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "REGISTRY-PROXY"))')" > "${DCD}"
 fi
 if [ "on-cluster" != "${STORAGE_LOCATION}" ]; then
-  rm -rf "${DASHBOARD_LOCATION}"/pd.json "${DASHBOARD_LOCATION}"/tikv.json
+  rm -rf "${DASHBOARD_LOCATION}"/drycc_storage.json
   # shellcheck disable=SC2005
-  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "STORAGE-MINIO"))')" > "${DCD}"
-  # shellcheck disable=SC2005
-  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "STORAGE-META-PD"))')" > "${DCD}"
-  # shellcheck disable=SC2005
-  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "STORAGE-META-TIKV"))')" > "${DCD}"
+  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "STORAGE"))')" > "${DCD}"
 fi
 
 for filename in "${DASHBOARD_LOCATION}"/*.json; do

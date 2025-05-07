@@ -5,13 +5,10 @@ env:
   valueFrom:
     fieldRef:
       fieldPath: metadata.namespace
-{{- if eq .Values.global.prometheusLocation "off-cluster" }}
+{{- if .Values.prometheusUrl }}
 - name: "PROMETHEUS_URL"
-  valueFrom:
-    secretKeyRef:
-      name: prometheus-creds
-      key: url
-{{- else }}
+  value: "{{ .Values.prometheusUrl }}"
+{{- else if .Values.prometheus.enabled }}
 - name: "PROMETHEUS_USERNAME"
   valueFrom:
     secretKeyRef:
@@ -47,7 +44,7 @@ env:
 {{- else }}
   value: http://drycc-grafana.{{ .Values.global.platformDomain }}
 {{- end }}
-{{- if eq .Values.global.passportLocation "on-cluster"}}
+{{- if .Values.passport.enabled}}
 - name: "DRYCC_PASSPORT_URL"
 {{- if .Values.global.certManagerEnabled }}
   value: https://drycc-passport.{{ .Values.global.platformDomain }}
@@ -72,16 +69,16 @@ env:
 - name: DRYCC_PASSPORT_SECRET
   value: "{{ .Values.passportSecret }}"
 {{- end }}
-- name: "PROMETHEUS_LOCATION"
-  value: {{ .Values.global.prometheusLocation }}
 - name: "VALKEY_LOCATION"
-  value: {{ .Values.global.valkeyLocation }}
+  value: {{ ternary "on-cluster" "off-cluster" .Values.valkey.enabled }}
 - name: "STORAGE_LOCATION"
-  value: {{ .Values.global.storageLocation }}
+  value: {{ ternary "on-cluster" "off-cluster" .Values.storage.enabled }}
 - name: "DATABASE_LOCATION"
-  value: {{ .Values.global.databaseLocation }}
+  value: {{ ternary "on-cluster" "off-cluster" .Values.database.enabled }}
 - name: "PASSPORT_LOCATION"
-  value: {{ .Values.global.passportLocation }}
+  value: {{ ternary "on-cluster" "off-cluster" .Values.passport.enabled }}
 - name: "REGISTRY_LOCATION"
-  value: {{ .Values.global.registryLocation }}
+  value: {{ ternary "on-cluster" "off-cluster" .Values.registry.enabled }}
+- name: "PROMETHEUS_LOCATION"
+  value: {{ ternary "on-cluster" "off-cluster" .Values.prometheus.enabled }}
 {{- end }}

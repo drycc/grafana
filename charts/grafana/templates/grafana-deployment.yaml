@@ -37,16 +37,10 @@ spec:
         command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 10 }}
         args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 10 }}
         {{- end }}
-        {{- if or (.Values.limitsCpu) (.Values.limitsMemory)}}
+        {{- with index .Values "resources" }}
         resources:
-          limits:
-            {{- if (.Values.limitsCpu) }}
-            cpu: {{.Values.limitsCpu}}
-            {{- end}}
-            {{- if (.Values.limitsMemory) }}
-            memory: {{.Values.limitsMemory}}
-            {{- end}}
-        {{- end}}
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         ports:
         - containerPort: 3000
           name: grafana

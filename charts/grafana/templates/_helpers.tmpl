@@ -9,18 +9,8 @@ env:
 - name: "PROMETHEUS_URL"
   value: "{{ .Values.prometheusUrl }}"
 {{- else if .Values.prometheus.enabled }}
-- name: "PROMETHEUS_USERNAME"
-  valueFrom:
-    secretKeyRef:
-      name: prometheus-creds
-      key: username
-- name: "PROMETHEUS_PASSWORD"
-  valueFrom:
-    secretKeyRef:
-      name: prometheus-creds
-      key: password
 - name: "PROMETHEUS_URL"
-  value: "http://$(PROMETHEUS_USERNAME):$(PROMETHEUS_PASSWORD)@drycc-prometheus.{{$.Release.Namespace}}.svc.{{$.Values.global.clusterDomain}}:9090"
+  value: "http://drycc-victoriametrics-vmselect.{{$.Release.Namespace}}.svc.{{$.Values.global.clusterDomain}}:8481/select/0/prometheus"
 {{- end }}
 - name: "BIND_PORT"
   value: "3000"

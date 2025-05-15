@@ -123,6 +123,10 @@ if [ "on-cluster" != "${STORAGE_LOCATION}" ]; then
   echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "STORAGE"))')" > "${DCD}"
 fi
 
+if [ "on-cluster" != "${PROMETHEUS_LOCATION}" ]; then
+  rm -rf "${DASHBOARD_LOCATION}"/drycc_victoriametrics_*.json
+fi
+
 for filename in "${DASHBOARD_LOCATION}"/*.json; do
   echo "Importing ${filename} ..."
   curl -i -XPOST --data "@${filename}" -H "${HEADER_ACCEPT}" -H "${HEADER_CONTENT_TYPE}" "http://${GRAFANA_USER}:${GRAFANA_PASSWD}@localhost:${GRAFANA_PORT}/api/dashboards/db"

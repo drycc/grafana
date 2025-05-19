@@ -56,6 +56,8 @@ persistence:
 # this is usually a non required setting.
 environment:
   ALLOW_SIGN_UP: false
+## databaseUrl and databaseReplicaUrl are will no longer use the built-in database component
+databaseUrl: ""
 # The passportUrl, passportKey and passportSecret are will no longer use the built-in passport component
 passportUrl: ""
 passportKey: ""

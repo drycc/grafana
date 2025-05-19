@@ -5,6 +5,25 @@ env:
   valueFrom:
     fieldRef:
       fieldPath: metadata.namespace
+- name: GF_DATABASE_TYPE
+  value: postgres
+{{- if (.Values.databaseUrl) }}
+- name: GF_DATABASE_URL
+  value: "{{ .Values.databaseUrl }}"
+{{- else if .Values.database.enabled }}
+- name: GF_DATABASE_USER
+  valueFrom:
+    secretKeyRef:
+      name: database-creds
+      key: user
+- name: GF_DATABASE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: database-creds
+      key: password
+- name: GF_DATABASE_URL
+  value: "postgres://$(GF_DATABASE_USER):$(GF_DATABASE_PASSWORD)@drycc-database.{{.Release.Namespace}}.svc.{{.Values.global.clusterDomain}}:5432/grafana"
+{{- end }}
 {{- if .Values.prometheusUrl }}
 - name: "PROMETHEUS_URL"
   value: "{{ .Values.prometheusUrl }}"

@@ -62,54 +62,12 @@ cert_key = {{ .CERT_KEY }}
 #################################### Database ####################################
 [database]
 # Either "mysql", "postgres" or "sqlite3", it's your choice
-{{ if .DATABASE_TYPE }}
-type = {{ .DATABASE_TYPE }}
+{{ if .GF_DATABASE_TYPE }}
+type = {{ .GF_DATABASE_TYPE }}
 {{ end }}
-{{ if .DATABASE_HOST }}
-host = {{ .DATABASE_HOST }}
+{{ if .GF_DATABASE_URL }}
+url = {{ .GF_DATABASE_URL }}
 {{ end }}
-{{ if .DATABASE_NAME }}
-name = {{ .DATABASE_NAME }}
-{{ end }}
-{{ if .DATABASE_USER }}
-user = {{ .DATABASE_USER }}
-{{ end }}
-{{ if .DATABASE_PASSWORD }}
-password = {{ .DATABASE_PASSWORD }}
-{{ end }}
-
-# For "postgres" only, either "disable", "require" or "verify-full"
-{{ if .DATABASE_SSL_MODE }}
-ssl_mode = {{ .DATABASE_SSL_MODE }}
-{{ end }}
-
-# For "sqlite3" only, path relative to data_path setting
-{{ if .DATABASE_PATH }}
-path = {{ .DATABASE_PATH }}
-{{ end }}
-
-#################################### Session ####################################
-[session]
-# Either "memory", "file", "mysql", "postgres", default is "file"
-provider = {{ default "file" .SESSION_PROVIDER }}
-
-# Provider config options
-# memory: not have any config yet
-# file: session dir path, is relative to grafana data_path
-# mysql: go-sql-driver/mysql dsn config string, e.g. `user:password@tcp(127.0.0.1:3306)/database_name`
-# postgres: user=a password=b host=localhost port=5432 dbname=c sslmode=disable
-{{ if .SESSION_PROVIDER_CONFIG }}
-provider_config = {{ .SESSION_PROVIDER_CONFIG }}
-{{ end }}
-
-# Session cookie name
-cookie_name = {{ default "grafana_sess" .SESSION_COOKIE_NAME }}
-
-# If you use session in https only, default is false
-cookie_secure = {{ default "false" .SESSION_COOKIE_SECURE }}
-
-# Session life time, default is 86400
-session_life_time = {{ default "86400" .SESSION_LIFE_TIME }}
 
 #################################### Analytics ####################################
 [analytics]

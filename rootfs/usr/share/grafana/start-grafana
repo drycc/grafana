@@ -99,11 +99,12 @@ DCD="${DASHBOARD_LOCATION}"/drycc_component_health.json
 
 # remove off-cluster component panel
 if [ "on-cluster" != "${VALKEY_LOCATION}" ]; then
-  rm -rf "${DASHBOARD_LOCATION}"/valkey.json
+  rm -rf "${DASHBOARD_LOCATION}"/drycc_valkey.json
   # shellcheck disable=SC2005
   echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "VALKEY"))')" > "${DCD}"
 fi
 if [ "on-cluster" != "${DATABASE_LOCATION}" ]; then
+  rm -rf "${DASHBOARD_LOCATION}"/drycc_database.json
   # shellcheck disable=SC2005
   echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "DATABASE"))')" > "${DCD}"
 fi
@@ -112,6 +113,7 @@ if [ "on-cluster" != "${PASSPORT_LOCATION}" ]; then
   echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "PASSPORT"))')" > "${DCD}"
 fi
 if [ "on-cluster" != "${REGISTRY_LOCATION}" ]; then
+  rm -rf "${DASHBOARD_LOCATION}"/drycc_registry.json
   # shellcheck disable=SC2005
   echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "REGISTRY"))')" > "${DCD}"
   # shellcheck disable=SC2005

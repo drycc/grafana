@@ -99,21 +99,15 @@
             "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",container!=\"\",namespace=\"drycc\"}[1m])) * 1000",
             "groupBy": [
               {
-                "params": [
-                  "$interval"
-                ],
+                "params": ["$interval"],
                 "type": "time"
               },
               {
-                "params": [
-                  "namespace"
-                ],
+                "params": ["namespace"],
                 "type": "tag"
               },
               {
-                "params": [
-                  "null"
-                ],
+                "params": ["null"],
                 "type": "fill"
               }
             ],
@@ -208,21 +202,15 @@
             "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",container!=\"\",namespace=\"drycc\"})",
             "groupBy": [
               {
-                "params": [
-                  "$interval"
-                ],
+                "params": ["$interval"],
                 "type": "time"
               },
               {
-                "params": [
-                  "namespace"
-                ],
+                "params": ["namespace"],
                 "type": "tag"
               },
               {
-                "params": [
-                  "null"
-                ],
+                "params": ["null"],
                 "type": "fill"
               }
             ],
@@ -327,21 +315,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",container=~\"^drycc-passport.*$\"}[1m])) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -438,21 +420,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-passport.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -566,21 +542,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-controller.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -677,21 +647,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-controller.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -805,21 +769,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-builder.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -915,21 +873,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-builder.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1043,21 +995,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-database.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1152,21 +1098,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-database.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1280,21 +1220,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-logger-fluentbit.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1389,21 +1323,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-logger-fluentbit.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1519,21 +1447,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-grafana.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1630,21 +1552,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-grafana.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1758,21 +1674,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=\"drycc-logger\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1867,21 +1777,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=\"drycc-logger\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -1995,21 +1899,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-storage.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -2104,21 +2002,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-storage.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -2232,21 +2124,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-valkey.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -2340,21 +2226,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-valkey.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -2468,21 +2348,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-registry.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -2577,21 +2451,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=\"drycc-registry\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -2705,21 +2573,15 @@
                 "expr": "sum (rate (container_cpu_usage_seconds_total{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-registry-proxy.*$\"}[1m])) by (pod) * 1000",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -2814,21 +2676,15 @@
                 "expr": "sum (container_memory_working_set_bytes{image!=\"\",pod!=\"\",namespace=\"drycc\",container=~\"^drycc-registry-proxy.*$\"}) by (pod)",
                 "groupBy": [
                   {
-                    "params": [
-                      "$interval"
-                    ],
+                    "params": ["$interval"],
                     "type": "time"
                   },
                   {
-                    "params": [
-                      "pod_name"
-                    ],
+                    "params": ["pod_name"],
                     "type": "tag"
                   },
                   {
-                    "params": [
-                      "null"
-                    ],
+                    "params": ["null"],
                     "type": "fill"
                   }
                 ],
@@ -2884,9 +2740,7 @@
     "refresh": "5s",
     "schemaVersion": 37,
     "style": "dark",
-    "tags": [
-      "drycc"
-    ],
+    "tags": ["drycc"],
     "templating": {
       "list": []
     },
@@ -2907,17 +2761,7 @@
         "2h",
         "1d"
       ],
-      "time_options": [
-        "5m",
-        "15m",
-        "1h",
-        "6h",
-        "12h",
-        "24h",
-        "2d",
-        "7d",
-        "30d"
-      ]
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
     },
     "timezone": "browser",
     "title": "Drycc Component Health",
@@ -2925,5 +2769,5 @@
     "version": 1,
     "weekStart": ""
   },
-  "overwrite": false
+  "overwrite": true
 }

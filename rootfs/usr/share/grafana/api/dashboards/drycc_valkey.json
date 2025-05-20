@@ -13,11 +13,11 @@
         }
       ]
     },
-    "description": "A quickstart to setup the Prometheus Redis Exporter with preconfigured dashboards, alerting rules, and recording rules.",
+    "description": "Redis Dashboard for Prometheus Redis Exporter 1.x",
     "editable": true,
-    "gnetId": 14091,
+    "gnetId": 763,
     "graphTooltip": 1,
-    "id": 24,
+    "id": null,
     "iteration": 1602758020790,
     "links": [],
     "panels": [
@@ -90,7 +90,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "avg(irate(redis_commands_total{instance=~\"$instance\"} [1m])) by (cmd)",
+            "expr": "avg(irate(redis_commands_total{instance=~\"$instance\"} [$__rate_interval])) by (cmd)",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -197,7 +197,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "avg(irate(redis_commands_duration_seconds_total{instance=~\"$instance\"}[1m])) by (cmd)\n  /\navg(irate(redis_commands_total{instance=~\"$instance\"}[1m])) by (cmd)\n",
+            "expr": "avg(irate(redis_commands_duration_seconds_total{instance=~\"$instance\"}[$__rate_interval])) by (cmd)\n  /\navg(irate(redis_commands_total{instance=~\"$instance\"}[$__rate_interval])) by (cmd)\n",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -314,7 +314,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "avg(irate(redis_keyspace_hits_total{instance=~\"$instance\"}[1m]) / (irate(redis_keyspace_misses_total{instance=~\"$instance\"}[1m]) + irate(redis_keyspace_hits_total{instance=~\"$instance\"}[1m]))) by (instance)",
+            "expr": "avg(irate(redis_keyspace_hits_total{instance=~\"$instance\"}[$__rate_interval]) / (irate(redis_keyspace_misses_total{instance=~\"$instance\"}[$__rate_interval]) + irate(redis_keyspace_hits_total{instance=~\"$instance\"}[$__rate_interval]))) by (instance)",
             "format": "time_series",
             "hide": false,
             "interval": "",
@@ -697,7 +697,7 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "irate(redis_evicted_keys_total{instance=~\"$instance\"}[1m])",
+            "expr": "irate(redis_evicted_keys_total{instance=~\"$instance\"}[$__rate_interval])",
             "format": "time_series",
             "interval": "",
             "intervalFactor": 2,
@@ -1289,10 +1289,7 @@
     "refresh": false,
     "schemaVersion": 25,
     "style": "dark",
-    "tags": [
-      "prometheus",
-      "redis"
-    ],
+    "tags": ["prometheus", "redis"],
     "templating": {
       "list": [
         {
@@ -1301,10 +1298,7 @@
             "selected": true,
             "tags": [],
             "text": "redisdb-7d6b98cd98-kjt5x + redisdb-7d6b98cd98-pbkg6",
-            "value": [
-              "redisdb-7d6b98cd98-kjt5x",
-              "redisdb-7d6b98cd98-pbkg6"
-            ]
+            "value": ["redisdb-7d6b98cd98-kjt5x", "redisdb-7d6b98cd98-pbkg6"]
           },
           "datasource": "${datasource}",
           "definition": "label_values(redis_up, instance)",
@@ -1333,7 +1327,7 @@
           },
           "hide": 0,
           "includeAll": false,
-          "label": null,
+          "label": "Data Source",
           "multi": false,
           "name": "datasource",
           "options": [],
@@ -1362,21 +1356,12 @@
         "2h",
         "1d"
       ],
-      "time_options": [
-        "5m",
-        "15m",
-        "1h",
-        "6h",
-        "12h",
-        "24h",
-        "2d",
-        "7d",
-        "30d"
-      ]
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
     },
     "timezone": "browser",
-    "title": "Redis Exporter Quickstart and Dashboard",
+    "title": "Redis Dashboard for Prometheus Redis Exporter 1.x",
     "uid": "bRd48yKMdd",
     "version": 5
-  }
+  },
+  "overwrite": true
 }

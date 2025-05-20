@@ -37,12 +37,7 @@
         "cacheTimeout": null,
         "colorBackground": false,
         "colorValue": false,
-        "colors": [
-          "#299c46",
-          "rgba(237, 129, 40, 0.89)",
-          "#d44a3a"
-        ],
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "colors": ["#299c46", "rgba(237, 129, 40, 0.89)", "#d44a3a"],
         "description": "start time of the process",
         "format": "dateTimeFromNow",
         "gauge": {
@@ -119,12 +114,7 @@
         "cacheTimeout": null,
         "colorBackground": true,
         "colorValue": false,
-        "colors": [
-          "#967302",
-          "#967302",
-          "#967302"
-        ],
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "colors": ["#967302", "#967302", "#967302"],
         "description": "The number of cache request received",
         "format": "short",
         "gauge": {
@@ -201,12 +191,7 @@
         "cacheTimeout": null,
         "colorBackground": true,
         "colorValue": false,
-        "colors": [
-          "#1f78c1",
-          "#1f78c1",
-          "#1f78c1"
-        ],
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "colors": ["#1f78c1", "#1f78c1", "#1f78c1"],
         "description": "The number of cache request received (hits)",
         "format": "short",
         "gauge": {
@@ -283,12 +268,7 @@
         "cacheTimeout": null,
         "colorBackground": true,
         "colorValue": false,
-        "colors": [
-          "#890f02",
-          "#890f02",
-          "#890f02"
-        ],
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "colors": ["#890f02", "#890f02", "#890f02"],
         "description": "The number of cache request received (miss)",
         "format": "short",
         "gauge": {
@@ -365,12 +345,7 @@
         "cacheTimeout": null,
         "colorBackground": false,
         "colorValue": false,
-        "colors": [
-          "#299c46",
-          "rgba(237, 129, 40, 0.89)",
-          "#d44a3a"
-        ],
-        "datasource": "${DS_DS_PROMETHEUS}",
+        "colors": ["#299c46", "rgba(237, 129, 40, 0.89)", "#d44a3a"],
         "description": "Process Resident Memory Usage",
         "format": "decbytes",
         "gauge": {
@@ -448,7 +423,6 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": "${DS_DS_PROMETHEUS}",
         "description": "Average user and system CPU time spent in seconds.",
         "fill": 1,
         "gridPos": {
@@ -534,7 +508,6 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": "${DS_DS_PROMETHEUS}",
         "description": "Virtual and Resident memory size in bytes, averages over 5 min interval",
         "fill": 1,
         "gridPos": {
@@ -628,7 +601,6 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": "${DS_DS_PROMETHEUS}",
         "description": "Number of open file descriptors",
         "fill": 1,
         "gridPos": {
@@ -728,7 +700,6 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": "${DS_DS_PROMETHEUS}",
         "description": "The HTTP requests",
         "fill": 1,
         "gridPos": {
@@ -814,7 +785,6 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": "${DS_DS_PROMETHEUS}",
         "description": "The in-flight HTTP requests",
         "fill": 1,
         "gridPos": {
@@ -900,7 +870,6 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": "${DS_DS_PROMETHEUS}",
         "description": "The rate of registry cache requests",
         "fill": 1,
         "gridPos": {
@@ -986,7 +955,6 @@
         "bars": false,
         "dashLength": 10,
         "dashes": false,
-        "datasource": "${DS_DS_PROMETHEUS}",
         "fill": 1,
         "gridPos": {
           "h": 7,
@@ -1083,7 +1051,6 @@
           "mode": "spectrum"
         },
         "dataFormat": "timeseries",
-        "datasource": "${DS_DS_PROMETHEUS}",
         "gridPos": {
           "h": 7,
           "w": 8,
@@ -1142,7 +1109,6 @@
           "mode": "spectrum"
         },
         "dataFormat": "timeseries",
-        "datasource": "${DS_DS_PROMETHEUS}",
         "gridPos": {
           "h": 7,
           "w": 8,
@@ -1201,7 +1167,6 @@
           "mode": "spectrum"
         },
         "dataFormat": "timeseries",
-        "datasource": "${DS_DS_PROMETHEUS}",
         "gridPos": {
           "h": 7,
           "w": 8,
@@ -1260,7 +1225,6 @@
           "mode": "spectrum"
         },
         "dataFormat": "timeseries",
-        "datasource": "${DS_DS_PROMETHEUS}",
         "gridPos": {
           "h": 7,
           "w": 8,
@@ -1319,7 +1283,6 @@
           "mode": "spectrum"
         },
         "dataFormat": "timeseries",
-        "datasource": "${DS_DS_PROMETHEUS}",
         "gridPos": {
           "h": 7,
           "w": 8,
@@ -1369,17 +1332,12 @@
     "refresh": "10s",
     "schemaVersion": 16,
     "style": "dark",
-    "tags": [
-      "docker",
-      "registry",
-      "internals"
-    ],
+    "tags": ["docker", "registry", "internals"],
     "templating": {
       "list": [
         {
           "allValue": null,
           "current": {},
-          "datasource": "${DS_DS_PROMETHEUS}",
           "hide": 0,
           "includeAll": false,
           "label": null,
@@ -1399,7 +1357,6 @@
         {
           "allValue": null,
           "current": {},
-          "datasource": "${DS_DS_PROMETHEUS}",
           "hide": 0,
           "includeAll": false,
           "label": null,
@@ -1419,7 +1376,6 @@
         {
           "allValue": null,
           "current": {},
-          "datasource": "${DS_DS_PROMETHEUS}",
           "hide": 0,
           "includeAll": false,
           "label": null,
@@ -1455,21 +1411,12 @@
         "2h",
         "1d"
       ],
-      "time_options": [
-        "5m",
-        "15m",
-        "1h",
-        "6h",
-        "12h",
-        "24h",
-        "2d",
-        "7d",
-        "30d"
-      ]
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
     },
     "timezone": "",
     "title": "Docker Registry",
     "uid": "CoBSgj8iz",
     "version": 19
-  }
+  },
+  "overwrite": true
 }

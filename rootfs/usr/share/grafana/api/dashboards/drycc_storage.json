@@ -33,9 +33,7 @@
         "icon": "external link",
         "includeVars": true,
         "keepTime": true,
-        "tags": [
-          "minio"
-        ],
+        "tags": ["minio"],
         "type": "dashboards"
       }
     ],
@@ -85,9 +83,7 @@
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -158,9 +154,7 @@
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "last"
-            ],
+            "calcs": ["last"],
             "fields": "",
             "values": false
           },
@@ -265,15 +259,11 @@
             "displayMode": "table",
             "placement": "bottom",
             "showLegend": true,
-            "values": [
-              "percent"
-            ]
+            "values": ["percent"]
           },
           "pieType": "donut",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -384,9 +374,7 @@
                 "id": "byNames",
                 "options": {
                   "mode": "exclude",
-                  "names": [
-                    "Usage"
-                  ],
+                  "names": ["Usage"],
                   "prefix": "All except:",
                   "readOnly": true
                 }
@@ -474,9 +462,7 @@
           "namePlacement": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -648,9 +634,7 @@
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "last"
-            ],
+            "calcs": ["last"],
             "fields": "",
             "values": false
           },
@@ -807,9 +791,7 @@
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -869,9 +851,7 @@
           "minVizWidth": 75,
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -962,9 +942,7 @@
           "justifyMode": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -1218,9 +1196,7 @@
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -1299,9 +1275,7 @@
           "justifyMode": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -1364,9 +1338,7 @@
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "last"
-            ],
+            "calcs": ["last"],
             "fields": "",
             "values": false
           },
@@ -1430,9 +1402,7 @@
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "last"
-            ],
+            "calcs": ["last"],
             "fields": "",
             "values": false
           },
@@ -1764,9 +1734,7 @@
           "namePlacement": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -1885,9 +1853,7 @@
           "namePlacement": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -2044,9 +2010,7 @@
           "minVizWidth": 75,
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -2681,9 +2645,7 @@
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -3248,9 +3210,7 @@
     ],
     "refresh": "",
     "schemaVersion": 39,
-    "tags": [
-      "minio"
-    ],
+    "tags": ["minio"],
     "templating": {
       "list": [
         {
@@ -3289,17 +3249,7 @@
         "2h",
         "1d"
       ],
-      "time_options": [
-        "5m",
-        "15m",
-        "1h",
-        "6h",
-        "12h",
-        "24h",
-        "2d",
-        "7d",
-        "30d"
-      ]
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
     },
     "timezone": "",
     "title": "MinIO Dashboard",
@@ -3307,5 +3257,5 @@
     "version": 54,
     "weekStart": ""
   },
-  "overwrite": false
+  "overwrite": true
 }

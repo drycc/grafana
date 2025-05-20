@@ -29,6 +29,16 @@ spec:
         fsGroup: 1001
         runAsGroup: 1001
         runAsUser: 1001
+      initContainers:
+      - name: drycc-grafana-init
+        image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/python-dev:latest
+        imagePullPolicy: {{.Values.imagePullPolicy}}
+        args:
+          - netcat
+          - -v
+          - -u
+          - $(GF_DATABASE_URL)
+        {{- include "grafana.envs" . | indent 8 }}
       containers:
       - name: drycc-grafana
         image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/grafana:{{.Values.imageTag}}

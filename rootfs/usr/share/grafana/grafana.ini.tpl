@@ -122,9 +122,6 @@ auto_assign_org_role = {{ default "Viewer" .AUTO_ASSIGN_ORG_ROLE }}
 
 # Background text for the user field on the login page
 login_hint = {{ default "email or username" .LOGIN_HINT }}
-#################################### Auth ####################################
-[auth]
-oauth_auto_login = true
 
 #################################### Anonymous Auth ##########################
 [auth.anonymous]
@@ -191,6 +188,7 @@ config_file = "/usr/share/grafana/ldap.toml"
 {{ if .DRYCC_PASSPORT_URL }}
 name = OAuth
 enabled = true
+auto_login = true
 client_id = {{ .DRYCC_PASSPORT_KEY }}
 client_secret = {{ .DRYCC_PASSPORT_SECRET }}
 scopes = profile,openid

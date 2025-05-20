@@ -84,9 +84,7 @@
         "options": {
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -164,9 +162,7 @@
         "options": {
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "lastNotNull"
-            ],
+            "calcs": ["lastNotNull"],
             "fields": "",
             "values": false
           },
@@ -239,9 +235,7 @@
         "options": {
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -313,9 +307,7 @@
           "justifyMode": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -387,9 +379,7 @@
           "justifyMode": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -458,9 +448,7 @@
           "justifyMode": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -533,9 +521,7 @@
           "justifyMode": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -604,9 +590,7 @@
           "justifyMode": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -677,9 +661,7 @@
           "justifyMode": "auto",
           "orientation": "horizontal",
           "reduceOptions": {
-            "calcs": [
-              "mean"
-            ],
+            "calcs": ["mean"],
             "fields": "",
             "values": false
           },
@@ -1211,9 +1193,7 @@
     "refresh": "10s",
     "schemaVersion": 37,
     "style": "dark",
-    "tags": [
-      "kubernetes"
-    ],
+    "tags": ["kubernetes"],
     "templating": {
       "list": [
         {
@@ -1243,12 +1223,8 @@
           "allValue": ".*",
           "current": {
             "selected": true,
-            "text": [
-              "All"
-            ],
-            "value": [
-              "$__all"
-            ]
+            "text": ["All"],
+            "value": ["$__all"]
           },
           "datasource": {},
           "definition": "label_values({namespace=\"$Namespace\"},deployment)",
@@ -1274,12 +1250,8 @@
           "allValue": ".*",
           "current": {
             "selected": true,
-            "text": [
-              "All"
-            ],
-            "value": [
-              "$__all"
-            ]
+            "text": ["All"],
+            "value": ["$__all"]
           },
           "definition": "label_values({namespace=\"$Namespace\"},statefulset)",
           "hide": 0,
@@ -1343,22 +1315,13 @@
         "2h",
         "1d"
       ],
-      "time_options": [
-        "5m",
-        "15m",
-        "1h",
-        "6h",
-        "12h",
-        "24h",
-        "2d",
-        "7d",
-        "30d"
-      ]
+      "time_options": ["5m", "15m", "1h", "6h", "12h", "24h", "2d", "7d", "30d"]
     },
     "timezone": "browser",
     "title": "Kubernetes Deployment metrics",
     "uid": "wdtm7Mc7z123",
     "version": 1,
     "weekStart": ""
-  }
+  },
+  "overwrite": true
 }

@@ -4,7 +4,7 @@ FROM registry.drycc.cc/drycc/base:${CODENAME}
 ENV DRYCC_UID=1001 \
   DRYCC_GID=1001 \
   DRYCC_HOME_DIR=/usr/share/grafana \
-  GRAFANA_VERSION="11.6.0" \
+  GRAFANA_VERSION="12.0.0" \
   ENVTPL_VERSION="1.0.0" \
   JQ_VERSION="1.7.1"
 

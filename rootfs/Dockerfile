@@ -4,8 +4,7 @@ FROM registry.drycc.cc/drycc/base:${CODENAME}
 ENV DRYCC_UID=1001 \
   DRYCC_GID=1001 \
   DRYCC_HOME_DIR=/usr/share/grafana \
-  GRAFANA_VERSION="12.0.0" \
-  ENVTPL_VERSION="1.0.0" \
+  GRAFANA_VERSION="12.0.1" \
   JQ_VERSION="1.7.1"
 
 RUN groupadd drycc --gid ${DRYCC_GID} \
@@ -13,9 +12,8 @@ RUN groupadd drycc --gid ${DRYCC_GID} \
 
 COPY . /
 
-RUN install-packages fontconfig curl \
+RUN install-packages fontconfig \
   && install-stack grafana ${GRAFANA_VERSION} \
-  && install-stack envtpl ${ENVTPL_VERSION} \
   && install-stack jq ${JQ_VERSION} \
   && rm -rf \
       /usr/share/doc \
@@ -32,12 +30,9 @@ RUN install-packages fontconfig curl \
       /usr/lib/`echo $(uname -m)`-linux-gnu/gconv/EBC* \
   && mkdir -p /usr/share/man/man{1..8} \
   && mkdir /var/lib/grafana -p \
-  && chown -R ${DRYCC_UID}:${DRYCC_GID} /opt/drycc/grafana /usr/share/grafana /var/lib/grafana \
-  && chmod +x /usr/share/grafana/start-grafana \
-  && chmod 644 /usr/share/grafana/grafana.ini.tpl \
-  && chmod +x /usr/share/grafana/entrypoint.sh
+  && chown -R ${DRYCC_UID}:${DRYCC_GID} /opt/drycc/grafana /usr/share/grafana /var/lib/grafana
 
 USER ${DRYCC_UID}
 WORKDIR ${DRYCC_HOME_DIR}
-CMD ["./start-grafana"]
+CMD ["start-grafana"]
 EXPOSE 3000

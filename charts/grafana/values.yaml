@@ -54,8 +54,8 @@ persistence:
 # Any custom grafana environment variables
 # can be specified as key-value pairs under environment
 # this is usually a non required setting.
-environment:
-  ALLOW_SIGN_UP: false
+environment: {}
+
 ## databaseUrl and databaseReplicaUrl are will no longer use the built-in database component
 databaseUrl: ""
 # The passportUrl, passportKey and passportSecret are will no longer use the built-in passport component

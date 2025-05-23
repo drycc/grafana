@@ -1,0 +1,108 @@
+#!/bin/bash
+shopt -s expand_aliases
+
+alias curl="curl -s -H 'Content-Type: application/json' -H 'Accept: application/json'"
+NAMESPACE=${NAMESPACE:-drycc}
+GRAFANA_API_URL="http://${GF_SECURITY_ADMIN_USER}:${GF_SECURITY_ADMIN_PASSWORD}@localhost:${GF_SERVER_HTTP_PORT:-3000}"
+
+set -m
+echo "Starting Grafana in the background"
+exec grafana server --config /opt/drycc/grafana/conf/grafana.ini --homepath /opt/drycc/grafana &
+echo "Waiting for Grafana to come up..."
+until curl -q --fail --output /dev/null --silent "${GRAFANA_API_URL}/api/org"; do
+  printf "."
+  sleep 2
+done
+echo "Grafana is up and running."
+
+# Create organization. if it doesn't exist
+echo "Creating user organization..."
+curl -XPOST "${GRAFANA_API_URL}/api/orgs" -d '{"name":"User Org."}'
+
+# Get the JSON for the all organization
+GRAFANA_MAIN_ORG_ID=$(curl -XGET "${GRAFANA_API_URL}/api/orgs" | jq '.[] | select(.name == "Main Org.") | .id')
+GRAFANA_USER_ORG_ID=$(curl -XGET "${GRAFANA_API_URL}/api/orgs" | jq '.[] | select(.name == "User Org.") | .id')
+
+# Prometheus Service Host and Port
+echo "Using the following URL for prometheus: ${PROMETHEUS_URL}"
+echo "Creating main organization prometheus datasource..."
+curl -XPOST -H "X-Grafana-Org-Id: ${GRAFANA_MAIN_ORG_ID}" "${GRAFANA_API_URL}/api/datasources" -d '
+{
+  "name": "prometheus-datasource",
+  "type": "prometheus",
+  "access": "proxy",
+  "isDefault": true,
+  "url": "'"${PROMETHEUS_URL}"'",
+  "jsonData": {"httpMethod": "GET", "oauthPassThru": true, "sigV4Auth": false}
+}'
+echo "Creating user organization prometheus datasource..."
+curl -XPOST -H "X-Grafana-Org-Id: ${GRAFANA_USER_ORG_ID}" "${GRAFANA_API_URL}/api/datasources" -d '
+{
+  "name": "prometheus-datasource",
+  "type": "prometheus",
+  "access": "proxy",
+  "isDefault": true,
+  "url": "'"${PROMETHEUS_URL}"'",
+  "jsonData": {"httpMethod": "GET", "oauthPassThru": true, "sigV4Auth": false}
+}'
+
+echo ""
+echo "Importing default dashboards..."
+DASHBOARD_LOCATION="/usr/share/grafana/api/dashboards"
+# replace namespace
+# shellcheck disable=SC1003
+# shellcheck disable=SC2046
+sed -i 's@r\[\\"namespace\\\"\] == \\"drycc\\"@r\[\\"namespace\\"\] == \\"\'"${NAMESPACE}"'\\"@g' $(grep -F 'r[\"namespace\"] == \"drycc\"' -rl --include="*.json" "${DASHBOARD_LOCATION}/main")
+# drycc component dashboard
+DCD="${DASHBOARD_LOCATION}"/main/drycc_component_health.json
+
+# remove off-cluster component panel
+if [ "on-cluster" != "${VALKEY_LOCATION}" ]; then
+  rm -rf "${DASHBOARD_LOCATION}"/main/drycc_valkey.json
+  # shellcheck disable=SC2005
+  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "VALKEY"))')" > "${DCD}"
+fi
+if [ "on-cluster" != "${DATABASE_LOCATION}" ]; then
+  rm -rf "${DASHBOARD_LOCATION}"/main/drycc_database.json
+  # shellcheck disable=SC2005
+  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "DATABASE"))')" > "${DCD}"
+fi
+if [ "on-cluster" != "${PASSPORT_LOCATION}" ]; then
+  # shellcheck disable=SC2005
+  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "PASSPORT"))')" > "${DCD}"
+fi
+if [ "on-cluster" != "${REGISTRY_LOCATION}" ]; then
+  rm -rf "${DASHBOARD_LOCATION}"/main/drycc_registry.json
+  # shellcheck disable=SC2005
+  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "REGISTRY"))')" > "${DCD}"
+  # shellcheck disable=SC2005
+  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "REGISTRY-PROXY"))')" > "${DCD}"
+fi
+if [ "on-cluster" != "${STORAGE_LOCATION}" ]; then
+  rm -rf "${DASHBOARD_LOCATION}"/main/drycc_storage.json
+  # shellcheck disable=SC2005
+  echo "$(<"${DCD}" jq 'del(.dashboard.panels[] | select(.title == "STORAGE"))')" > "${DCD}"
+fi
+
+if [ "on-cluster" != "${PROMETHEUS_LOCATION}" ]; then
+  rm -rf "${DASHBOARD_LOCATION}"/main/drycc_victoriametrics_*.json
+fi
+
+echo "Creating main organization grafana dashboard..."
+for filename in "${DASHBOARD_LOCATION}"/main/*.json; do
+  echo "Importing ${filename} ..."
+  jq '{overwrite: true, dashboard: .}' "${filename}" | curl -XPOST --data-binary @- -H "X-Grafana-Org-Id: ${GRAFANA_MAIN_ORG_ID}" "${GRAFANA_API_URL}/api/dashboards/db"
+  echo ""
+  echo "Done importing ${filename}"
+done
+
+echo "Creating main organization grafana dashboard..."
+for filename in "${DASHBOARD_LOCATION}"/user/*.json; do
+  echo "Importing ${filename} ..."
+  jq '{overwrite: true, dashboard: .}' "${filename}" | curl -XPOST --data-binary @- -H "X-Grafana-Org-Id: ${GRAFANA_USER_ORG_ID}" "${GRAFANA_API_URL}/api/dashboards/db"
+  echo ""
+  echo "Done importing ${filename}"
+done
+
+echo "Bringing Grafana back to the foreground"
+fg

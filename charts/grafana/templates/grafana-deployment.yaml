@@ -54,13 +54,49 @@ spec:
         ports:
         - containerPort: 3000
           name: grafana
+        - containerPort: 9094
+          name: alerting
         {{- include "grafana.envs" . | indent 8 }}
+        livenessProbe:
+          tcpSocket:
+            port: grafana
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: grafana
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
+        startupProbe:
+          httpGet:
+            path: /api/health
+            port: grafana
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
       {{- if .Values.persistence.enabled }}
         volumeMounts:
         - name: grafana-data
           mountPath: /var/lib/grafana
+        - name: grafana-config
+          readOnly: false
+          subPath: grafana.ini
+          readOnly: true
+          mountPath: /opt/drycc/grafana/conf/grafana.ini
       volumes:
       - name: grafana-data
         persistentVolumeClaim:
           claimName: drycc-grafana
+      - name: grafana-config
+        configMap:
+          name: grafana-config
       {{- end }}

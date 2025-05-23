@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 # grafana share/use the following targets/exports
 SHORT_NAME ?= grafana
-SHELL_SCRIPTS = rootfs/usr/share/grafana/start-grafana
+SHELL_SCRIPTS = rootfs/usr/bin/start-grafana
 
 BUILD_TAG ?= git-$(shell git rev-parse --short HEAD)
 DRYCC_REGISTRY ?= ${DEV_REGISTRY}

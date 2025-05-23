@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    heritage: drycc
+data:
+  grafana.ini: |
+    app_mode = production
+
+    [paths]
+    data = /var/lib/grafana
+    home = /usr/share/grafana
+    logs = /var/log/grafana
+    plugins = /var/lib/grafana/plugins
+    provisioning = /opt/drycc/grafana/conf/provisioning
+
+    [server]
+    http_port = 3000
+    router_logging = false
+    static_root_path = public
+    enable_gzip = true
+
+    [analytics]
+    reporting_enabled = false
+
+    [security]
+    admin_user = drycc
+    admin_password = drycc
+    admin_email = admin@drycc.cc
+    login_remember_days = 7
+    cookie_username = grafana_user
+    cookie_remember_name = grafana_remember
+    disable_gravatar = false
+
+    [users]
+    allow_sign_up = false
+    allow_org_create = false
+    auto_assign_org = true
+    auto_assign_org_id = 1
+    login_hint = email or username
+
+    [auth]
+    disable_login_form = true
+
+    [auth.anonymous]
+    enabled = false
+    org_name = Main Org.
+
+    [auth.basic]
+    enabled = true
+
+    [auth.generic_oauth]
+    enabled = true
+    name = Drycc OAuth
+    auto_login = true
+    scopes = email,profile,openid
+    allow_sign_up = true
+    tls_skip_verify_insecure = true
+    org_attribute_path = roles
+    org_mapping = admin:*:Admin staff:*:Editor users:2:Viewer
+    role_attribute_path = (is_active && ((is_superuser && 'GrafanaAdmin') || (is_staff && 'Editor'))) || 'None'
+    allow_assign_grafana_admin = true
+
+    [emails]
+    welcome_email_on_sign_up = false
+
+    [log]
+    mode = console
+    buffer_len = 10000
+    level = info
+
+    [log.console]
+    level = info
+
+    [unified_alerting]
+    enabled = true
+    disabled_orgs = 2
+    ha_peer_timeout = 15s
+    ha_reconnect_timeout = 2m
+    ha_listen_address = 0.0.0.0:9094
+
+    [dashboards.json]
+    enabled = true
+    path = /usr/share/grafana/dashboards

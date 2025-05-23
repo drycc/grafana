@@ -14,5 +14,8 @@ spec:
   - port: 80
     name: grafana
     targetPort: grafana
+  - port: 9094
+    name: alerting
+    targetPort: alerting
   selector:
     app: drycc-grafana

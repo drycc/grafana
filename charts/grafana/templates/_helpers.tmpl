@@ -1,10 +1,39 @@
 {{/* Generate grafana envs */}}
 {{- define "grafana.envs" }}
 env:
+- name: POD_IP
+  valueFrom:
+    fieldRef:
+      fieldPath: status.podIP
 - name: NAMESPACE
   valueFrom:
     fieldRef:
       fieldPath: metadata.namespace
+{{- if .Values.prometheusUrl }}
+- name: "PROMETHEUS_URL"
+  value: "{{ .Values.prometheusUrl }}"
+{{- else if .Values.prometheus.enabled }}
+- name: "PROMETHEUS_URL"
+  value: "http://$(DRYCC_CONTROLLER_API_SERVICE_HOST):$(DRYCC_CONTROLLER_API_SERVICE_PORT)/v2/prometheus"
+{{- end }}
+- name: "VALKEY_LOCATION"
+  value: {{ ternary "on-cluster" "off-cluster" .Values.valkey.enabled }}
+- name: "STORAGE_LOCATION"
+  value: {{ ternary "on-cluster" "off-cluster" .Values.storage.enabled }}
+- name: "DATABASE_LOCATION"
+  value: {{ ternary "on-cluster" "off-cluster" .Values.database.enabled }}
+- name: "PASSPORT_LOCATION"
+  value: {{ ternary "on-cluster" "off-cluster" .Values.passport.enabled }}
+- name: "REGISTRY_LOCATION"
+  value: {{ ternary "on-cluster" "off-cluster" .Values.registry.enabled }}
+- name: "PROMETHEUS_LOCATION"
+  value: {{ ternary "on-cluster" "off-cluster" .Values.prometheus.enabled }}
+- name: "DRYCC_GATEWAY_SCHEME"
+{{- if .Values.global.certManagerEnabled }}
+  value: https
+{{- else }}
+  value: http
+{{- end}}
 - name: GF_DATABASE_TYPE
   value: postgres
 {{- if (.Values.databaseUrl) }}
@@ -24,70 +53,55 @@ env:
 - name: GF_DATABASE_URL
   value: "postgres://$(GF_DATABASE_USER):$(GF_DATABASE_PASSWORD)@drycc-database.{{.Release.Namespace}}.svc.{{.Values.global.clusterDomain}}:5432/grafana"
 {{- end }}
-{{- if .Values.prometheusUrl }}
-- name: "PROMETHEUS_URL"
-  value: "{{ .Values.prometheusUrl }}"
-{{- else if .Values.prometheus.enabled }}
-- name: "PROMETHEUS_URL"
-  value: "http://drycc-victoriametrics-vmselect.{{$.Release.Namespace}}.svc.{{$.Values.global.clusterDomain}}:8481/select/0/prometheus"
-{{- end }}
-- name: "BIND_PORT"
-  value: "3000"
-{{- if not (.Values.environment.DEFAULT_USER) }}
-- name: "DEFAULT_USER"
+{{- if not (.Values.environment.GF_SECURITY_ADMIN_USER) }}
+- name: "GF_SECURITY_ADMIN_USER"
   value: {{ randAlphaNum 32 }}
 {{- end}}
-{{- if not (.Values.environment.DEFAULT_USER_PASSWORD) }}
-- name: "DEFAULT_USER_PASSWORD"
+{{- if not (.Values.environment.GF_SECURITY_ADMIN_PASSWORD) }}
+- name: "GF_SECURITY_ADMIN_PASSWORD"
   value: {{ randAlphaNum 32 }}
 {{- end}}
-- name: "KUBERNETES_CLUSTER_DOMAIN"
-  value: {{.Values.global.clusterDomain}}
-{{- range $key, $value := .Values.environment }}
-- name: {{ $key }}
-  value: {{ $value | quote }}
-{{- end }}
-- name: "DRYCC_GRAFANA_URL"
-{{- if .Values.global.certManagerEnabled }}
-  value: https://drycc-grafana.{{ .Values.global.platformDomain }}
-{{- else }}
-  value: http://drycc-grafana.{{ .Values.global.platformDomain }}
-{{- end }}
+{{- if not (.Values.environment.GF_SECURITY_SECRET_KEY) }}
+- name: "GF_SECURITY_SECRET_KEY"
+  value: {{ randAlphaNum 32 }}
+{{- end}}
+- name: "GF_SERVER_ROOT_URL"
+  value: $(DRYCC_GATEWAY_SCHEME)://drycc-grafana.{{ .Values.global.platformDomain }}
 {{- if .Values.passport.enabled}}
-- name: "DRYCC_PASSPORT_URL"
-{{- if .Values.global.certManagerEnabled }}
-  value: https://drycc-passport.{{ .Values.global.platformDomain }}
-{{- else }}
-  value: http://drycc-passport.{{ .Values.global.platformDomain }}
-{{- end }}
-- name: DRYCC_PASSPORT_KEY
+- name: GF_AUTH_GENERIC_OAUTH_AUTH_URL
+  value: $(DRYCC_GATEWAY_SCHEME)://drycc-passport.{{ .Values.global.platformDomain }}/oauth/authorize/
+- name: GF_AUTH_GENERIC_OAUTH_TOKEN_URL
+  value: $(DRYCC_GATEWAY_SCHEME)://drycc-passport.{{ .Values.global.platformDomain }}/oauth/token/
+- name: GF_AUTH_GENERIC_OAUTH_API_URL
+  value: $(DRYCC_GATEWAY_SCHEME)://drycc-passport.{{ .Values.global.platformDomain }}/oauth/userinfo/
+- name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
   valueFrom:
     secretKeyRef:
       name: passport-creds
       key: drycc-passport-grafana-key
-- name: DRYCC_PASSPORT_SECRET
+- name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
   valueFrom:
     secretKeyRef:
       name: passport-creds
       key: drycc-passport-grafana-secret
 {{- else }}
-- name: DRYCC_PASSPORT_URL
-  value: "{{ .Values.passportUrl }}"
-- name: DRYCC_PASSPORT_KEY
+- name: GF_AUTH_GENERIC_OAUTH_AUTH_URL
+  value: {{ .Values.passportUrl }}/oauth/authorize/
+- name: GF_AUTH_GENERIC_OAUTH_TOKEN_URL
+  value: {{ .Values.passportUrl }}/oauth/token/
+- name: GF_AUTH_GENERIC_OAUTH_API_URL
+  value: {{ .Values.passportUrl }}/oauth/userinfo/
+- name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
   value: "{{ .Values.passportKey }}"
-- name: DRYCC_PASSPORT_SECRET
+- name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
   value: "{{ .Values.passportSecret }}"
 {{- end }}
-- name: "VALKEY_LOCATION"
-  value: {{ ternary "on-cluster" "off-cluster" .Values.valkey.enabled }}
-- name: "STORAGE_LOCATION"
-  value: {{ ternary "on-cluster" "off-cluster" .Values.storage.enabled }}
-- name: "DATABASE_LOCATION"
-  value: {{ ternary "on-cluster" "off-cluster" .Values.database.enabled }}
-- name: "PASSPORT_LOCATION"
-  value: {{ ternary "on-cluster" "off-cluster" .Values.passport.enabled }}
-- name: "REGISTRY_LOCATION"
-  value: {{ ternary "on-cluster" "off-cluster" .Values.registry.enabled }}
-- name: "PROMETHEUS_LOCATION"
-  value: {{ ternary "on-cluster" "off-cluster" .Values.prometheus.enabled }}
+- name: GF_UNIFIED_ALERTING_HA_PEERS
+  value: "drycc-grafana.{{.Release.Namespace}}.svc.{{.Values.global.clusterDomain}}:9094"
+- name: GF_UNIFIED_ALERTING_HA_ADVERTISE_ADDRESS
+  value: "$(POD_IP):9094"
+{{- range $key, $value := .Values.environment }}
+- name: {{ $key }}
+  value: {{ $value | quote }}
+{{- end }}
 {{- end }}

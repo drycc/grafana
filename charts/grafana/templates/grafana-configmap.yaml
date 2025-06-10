@@ -6,6 +6,33 @@ metadata:
   labels:
     heritage: drycc
 data:
+  Caddyfile: |
+    {
+      order reverse_proxy before encode
+      auto_https off
+      log {
+        output stdout
+      }
+    }
+    :5000 {
+      handle /oauth2/* {
+        reverse_proxy 127.0.0.1:4000
+      }
+
+      handle {
+        forward_auth 127.0.0.1:4000 {
+          uri /oauth2/userinfo
+          copy_headers Remote-User Remote-Name Remote-Email
+          header_up -Connection
+          header_up X-Real-IP {remote_host}
+          @error status 401
+          handle_response @error {
+            redir * /oauth2/sign_in?redirect={scheme}://{host}{uri}
+          }
+        }
+        reverse_proxy 127.0.0.1:3000
+      }
+    }
   grafana.ini: |
     app_mode = production
 
@@ -13,8 +40,8 @@ data:
     data = /var/lib/grafana
     home = /usr/share/grafana
     logs = /var/log/grafana
-    plugins = /var/lib/grafana/plugins
-    provisioning = /opt/drycc/grafana/conf/provisioning
+    plugins = /usr/share/grafana/plugins
+    provisioning = /usr/share/grafana/provisioning
 
     [server]
     http_port = 3000
@@ -26,9 +53,8 @@ data:
     reporting_enabled = false
 
     [security]
-    admin_user = drycc
-    admin_password = drycc
     admin_email = admin@drycc.cc
+    secret_key = KSJRZP0RIhO7P14e1TykTEzWuJhBobAj
     login_remember_days = 7
     cookie_username = grafana_user
     cookie_remember_name = grafana_remember
@@ -37,31 +63,31 @@ data:
     [users]
     allow_sign_up = false
     allow_org_create = false
-    auto_assign_org = true
-    auto_assign_org_id = 1
+    auto_assign_org = false
     login_hint = email or username
 
     [auth]
     disable_login_form = true
-
-    [auth.anonymous]
-    enabled = false
-    org_name = Main Org.
+    disable_signout_menu = false
 
     [auth.basic]
     enabled = true
 
-    [auth.generic_oauth]
+    [auth.proxy]
     enabled = true
-    name = Drycc OAuth
-    auto_login = true
-    scopes = email,profile,openid
-    allow_sign_up = true
-    tls_skip_verify_insecure = true
-    org_attribute_path = roles
-    org_mapping = admin:*:Admin staff:*:Editor users:2:Viewer
-    role_attribute_path = (is_active && ((is_superuser && 'GrafanaAdmin') || (is_staff && 'Editor'))) || 'None'
-    allow_assign_grafana_admin = true
+    header_name = Remote-User
+    header_property = username
+    auto_sign_up = true
+    sync_ttl = 15
+    headers = Name:Remote-Name Email:Remote-Email
+    enable_login_token = false
+
+    [live]
+    max_connections = 100
+    message_size_limit = 65536
+    allowed_origins = *
+    ha_engine = redis
+    ha_prefix = "grafana:live"
 
     [emails]
     welcome_email_on_sign_up = false
@@ -74,13 +100,25 @@ data:
     [log.console]
     level = info
 
+    [quota]
+    enabled = true
+    org_user = 2
+    org_dashboard = 20
+    org_data_source = 5
+    org_api_key = 2
+    org_alert_rule = 20
+    user_org = 2
+    alerting_rule_group_rules = 20
+    alerting_rule_evaluation_results = 20
+
     [unified_alerting]
     enabled = true
-    disabled_orgs = 2
     ha_peer_timeout = 15s
     ha_reconnect_timeout = 2m
     ha_listen_address = 0.0.0.0:9094
+    evaluation_timeout = 3s
+    max_attempts = 3
+    min_interval = 1m
 
-    [dashboards.json]
-    enabled = true
-    path = /usr/share/grafana/dashboards
+    [plugins]
+    plugin_admin_enabled = false

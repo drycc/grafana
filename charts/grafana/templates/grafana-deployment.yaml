@@ -46,6 +46,23 @@ spec:
         {{- if .Values.diagnosticMode.enabled }}
         command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 10 }}
         args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 10 }}
+        {{- else }}
+        args:
+        - /usr/bin/env
+        - bash
+        - -ec
+        - |
+          set -m
+          echo "Configure Grafana live HA engine"
+          DRYCC_VALKEY_JSON=$(echo "$DRYCC_VALKEY_URL" | jq -R 'capture("^(?<scheme>redis[s]?)://(?<username>[^:]+)?(?::(?<password>[^@]+))?@(?<address>[^/]+)/?(?<db>[0-9]*)$")')
+          GF_LIVE_HA_ENGINE_ADDRESS=$(echo "${DRYCC_VALKEY_JSON}" |jq -r '.address')
+          GF_LIVE_HA_ENGINE_PASSWORD=$(echo "${DRYCC_VALKEY_JSON}" |jq -r '.password')
+          DRYCC_VICTORIAMETRICS_JSON=$(echo "$DRYCC_VICTORIAMETRICS_URL" | jq -R 'capture("^(?<scheme>https?://)(?<username>[^:@]+):(?<password>[^@]+)@(?<address>.+)$") | {url: "\(.scheme)\(.address)", username: .username, password: .password}')
+          DRYCC_VICTORIAMETRICS_URL=$(echo "${DRYCC_VICTORIAMETRICS_JSON}" |jq -r '.url')
+          DRYCC_VICTORIAMETRICS_USERNAME=$(echo "${DRYCC_VICTORIAMETRICS_JSON}" |jq -r '.username')
+          DRYCC_VICTORIAMETRICS_PASSWORD=$(echo "${DRYCC_VICTORIAMETRICS_JSON}" |jq -r '.password')
+          export GF_LIVE_HA_ENGINE_ADDRESS GF_LIVE_HA_ENGINE_PASSWORD DRYCC_VICTORIAMETRICS_URL DRYCC_VICTORIAMETRICS_USERNAME DRYCC_VICTORIAMETRICS_PASSWORD
+          exec grafana server --config /usr/share/grafana/grafana.ini --homepath /opt/drycc/grafana
         {{- end }}
         {{- with index .Values "resources" }}
         resources:
@@ -57,6 +74,7 @@ spec:
         - containerPort: 9094
           name: alerting
         {{- include "grafana.envs" . | indent 8 }}
+        {{- if not .Values.diagnosticMode.enabled }}
         livenessProbe:
           tcpSocket:
             port: grafana
@@ -78,25 +96,138 @@ spec:
           httpGet:
             path: /api/health
             port: grafana
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
+        {{- end }}
+        volumeMounts:
+        {{- if .Values.persistence.enabled }}
+        - name: grafana-data
+          mountPath: /var/lib/grafana
+        {{- end }}
+        - name: grafana-config
+          subPath: grafana.ini
+          readOnly: true
+          mountPath: /usr/share/grafana/grafana.ini
+      - name: drycc-grafana-oauth2
+        image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/grafana:{{.Values.imageTag}}
+        imagePullPolicy: {{.Values.imagePullPolicy}}
+        {{- if .Values.diagnosticMode.enabled }}
+        command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 10 }}
+        args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 10 }}
+        {{- else }}
+        args:
+        - /usr/bin/env
+        - bash
+        - -ec
+        - |
+          set -m
+          python3 oauth2/main.py \
+            --port 4000 \
+            --client-id $(DRYCC_PASSPORT_KEY) \
+            --client-secret $(DRYCC_PASSPORT_SECRET) \
+            --oidc-issuer-url $(DRYCC_PASSPORT_URL)/oauth
+        {{- end }}
+        {{- with index .Values "resources" }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        ports:
+        - containerPort: 4000
+          name: oauth2
+        {{- include "grafana.envs" . | indent 8 }}
+        {{- if not .Values.diagnosticMode.enabled }}
+        livenessProbe:
+          tcpSocket:
+            port: oauth2
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /oauth2/healthz
+            port: oauth2
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 6
           successThreshold: 1
-      {{- if .Values.persistence.enabled }}
+        startupProbe:
+          httpGet:
+            path: /oauth2/healthz
+            port: oauth2
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
+        {{- end }}
+      - name: drycc-grafana-proxy
+        image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/grafana:{{.Values.imageTag}}
+        imagePullPolicy: {{.Values.imagePullPolicy}}
+        {{- if .Values.diagnosticMode.enabled }}
+        command: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.command "context" $) | nindent 10 }}
+        args: {{- include "common.tplvalues.render" (dict "value" .Values.diagnosticMode.args "context" $) | nindent 10 }}
+        {{- else }}
+        args:
+        - /usr/bin/env
+        - bash
+        - -ec
+        - |
+          set -m
+          caddy run --config /usr/share/grafana/Caddyfile
+        {{- end }}
+        {{- with index .Values "resources" }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+        ports:
+        - containerPort: 5000
+          name: proxy
+        {{- include "grafana.envs" . | indent 8 }}
+        {{- if not .Values.diagnosticMode.enabled }}
+        livenessProbe:
+          tcpSocket:
+            port: proxy
+          initialDelaySeconds: 120
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
+        readinessProbe:
+          httpGet:
+            path: /oauth2/healthz
+            port: proxy
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
+        startupProbe:
+          httpGet:
+            path: /oauth2/healthz
+            port: proxy
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 6
+          successThreshold: 1
+        {{- end }}
         volumeMounts:
-        - name: grafana-data
-          mountPath: /var/lib/grafana
         - name: grafana-config
-          readOnly: false
-          subPath: grafana.ini
+          subPath: Caddyfile
           readOnly: true
-          mountPath: /opt/drycc/grafana/conf/grafana.ini
+          mountPath: /usr/share/grafana/Caddyfile
       volumes:
+      {{- if .Values.persistence.enabled }}
       - name: grafana-data
         persistentVolumeClaim:
           claimName: drycc-grafana
+      {{- end }}
       - name: grafana-config
         configMap:
           name: grafana-config
-      {{- end }}

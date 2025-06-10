@@ -22,7 +22,7 @@
     ]
   },
   "description": "cpu memroy disk IO network temperature",
-  "editable": true,
+  "editable": false,
   "fiscalYearStartMonth": 0,
   "gnetId": 8919,
   "graphTooltip": 0,
@@ -64,7 +64,7 @@
         "type": "prometheus"
       },
       "description": "",
-      "editable": true,
+      "editable": false,
       "error": false,
       "gridPos": {
         "h": 1,

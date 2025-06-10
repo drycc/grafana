@@ -13,7 +13,7 @@
     ]
   },
   "description": "A quickstart to setup the Prometheus PostgreSQL Exporter with preconfigured dashboards, alerting rules, and recording rules.",
-  "editable": true,
+  "editable": false,
   "gnetId": 14114,
   "graphTooltip": 0,
   "id": 1,
@@ -25,7 +25,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -356,7 +356,7 @@
         "rgba(50, 172, 45, 0.97)"
       ],
       "decimals": 0,
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -481,7 +481,7 @@
       "dashLength": 10,
       "dashes": false,
       "decimals": 1,
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -808,7 +808,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -994,7 +994,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -1096,7 +1096,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {

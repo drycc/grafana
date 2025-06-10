@@ -22,7 +22,7 @@
     ]
   },
   "description": "MinIO Grafana Dashboard - https://min.io/",
-  "editable": true,
+  "editable": false,
   "fiscalYearStartMonth": 0,
   "gnetId": 13502,
   "graphTooltip": 0,

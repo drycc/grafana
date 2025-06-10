@@ -13,7 +13,7 @@ spec:
   ports:
   - port: 80
     name: grafana
-    targetPort: grafana
+    targetPort: proxy
   - port: 9094
     name: alerting
     targetPort: alerting

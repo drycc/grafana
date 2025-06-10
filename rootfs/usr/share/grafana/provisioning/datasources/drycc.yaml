@@ -1,0 +1,14 @@
+apiVersion: 1
+datasources:
+- name: Prometheus on Drycc
+  type: prometheus
+  access: proxy
+  orgId: 1
+  url: $DRYCC_VICTORIAMETRICS_URL
+  basicAuth: true
+  basicAuthUser: $DRYCC_VICTORIAMETRICS_USERNAME
+  isDefault: true
+  secureJsonData:
+    basicAuthPassword: $DRYCC_VICTORIAMETRICS_PASSWORD
+  version: 1
+  editable: false

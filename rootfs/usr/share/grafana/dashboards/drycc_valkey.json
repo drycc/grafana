@@ -13,7 +13,7 @@
     ]
   },
   "description": "Redis Dashboard for Prometheus Redis Exporter 1.x",
-  "editable": true,
+  "editable": false,
   "gnetId": 763,
   "graphTooltip": 1,
   "id": null,
@@ -41,7 +41,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "description": "Average taken across instances",
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -148,7 +148,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "description": "Average taken across instances",
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -258,7 +258,7 @@
       "datasource": "$datasource",
       "decimals": 2,
       "description": "Hit rate shows the percentage of key space lookups that hit a key.",
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -396,7 +396,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "description": "Total taken across instances",
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -529,7 +529,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -645,7 +645,7 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": "$datasource",
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -876,7 +876,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "description": "Sum taken across instances",
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {
@@ -985,7 +985,7 @@
       "dashes": false,
       "datasource": "$datasource",
       "description": "Sum taken across instances",
-      "editable": true,
+      "editable": false,
       "error": false,
       "fieldConfig": {
         "defaults": {

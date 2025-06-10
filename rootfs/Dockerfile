@@ -5,7 +5,9 @@ ENV DRYCC_UID=1001 \
   DRYCC_GID=1001 \
   DRYCC_HOME_DIR=/usr/share/grafana \
   GRAFANA_VERSION="12.0.1" \
-  JQ_VERSION="1.7.1"
+  JQ_VERSION="1.7.1" \
+  CADDY_VERSION="2.9.1" \
+  PYTHON_VERSION="3.13"
 
 RUN groupadd drycc --gid ${DRYCC_GID} \
   && useradd drycc -u ${DRYCC_UID} -g ${DRYCC_GID} -s /bin/bash -m -d ${DRYCC_HOME_DIR}
@@ -15,6 +17,14 @@ COPY . /
 RUN install-packages fontconfig \
   && install-stack grafana ${GRAFANA_VERSION} \
   && install-stack jq ${JQ_VERSION} \
+  && install-stack caddy $CADDY_VERSION \
+  && install-stack python $PYTHON_VERSION && . init-stack \
+  && python3 -m venv ${DRYCC_HOME_DIR}/venv \
+  && source ${DRYCC_HOME_DIR}/venv/bin/activate \
+  && pip3 install --disable-pip-version-check --no-cache-dir -r ${DRYCC_HOME_DIR}/oauth2/requirements.txt \
+  && chown -R ${DRYCC_UID}:${DRYCC_GID} ${DRYCC_HOME_DIR} \
+  # set env
+  && echo "source ${DRYCC_HOME_DIR}/venv/bin/activate" >> /opt/drycc/python/profile.d/python.sh \
   && rm -rf \
       /usr/share/doc \
       /usr/share/man \
@@ -34,5 +44,4 @@ RUN install-packages fontconfig \
 
 USER ${DRYCC_UID}
 WORKDIR ${DRYCC_HOME_DIR}
-CMD ["start-grafana"]
 EXPOSE 3000

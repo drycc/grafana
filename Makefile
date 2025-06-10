@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 # grafana share/use the following targets/exports
 SHORT_NAME ?= grafana
-SHELL_SCRIPTS = rootfs/usr/bin/start-grafana
+SHELL_SCRIPTS = rootfs/usr/share/grafana/oauth2
 
 BUILD_TAG ?= git-$(shell git rev-parse --short HEAD)
 DRYCC_REGISTRY ?= ${DEV_REGISTRY}
@@ -12,7 +12,7 @@ PLATFORM ?= linux/amd64,linux/arm64
 include includes.mk
 include versioning.mk
 
-TEST_ENV_PREFIX := podman run --rm -v ${CURDIR}:/bash -w /bash ${DEV_REGISTRY}/drycc/go-dev
+TEST_ENV_PREFIX := podman run --rm -v ${CURDIR}:/bash -w /bash ${DEV_REGISTRY}/drycc/python-dev
 
 build: podman-build
 push: podman-push
@@ -31,7 +31,7 @@ clean: check-podman
 test: test-style
 
 test-style:
-	${TEST_ENV_PREFIX} shellcheck $(SHELL_SCRIPTS)
+	${TEST_ENV_PREFIX} flake8 --show-source --max-line-length=100 $(SHELL_SCRIPTS)
 
 .PHONY: build push podman-build clean upgrade deploy test test-style
 

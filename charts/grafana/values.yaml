@@ -42,6 +42,10 @@ podAntiAffinityPreset:
   extraMatchLabels:
     app: "drycc-grafana"
 
+# grafana security config
+adminUsername: ""
+adminPassword: ""
+
 # Service
 service:
   # Provide any additional service annotations
@@ -56,14 +60,16 @@ persistence:
 # this is usually a non required setting.
 environment: {}
 
-## databaseUrl and databaseReplicaUrl are will no longer use the built-in database component
+## valkeyUrl are will no longer use the built-in valkey component
+valkeyUrl: ""
+## databaseUrl are will no longer use the built-in database component
 databaseUrl: ""
 # The passportUrl, passportKey and passportSecret are will no longer use the built-in passport component
 passportUrl: ""
 passportKey: ""
 passportSecret: ""
-# prometheusUrl is will no longer use the built-in prometheus component
-prometheusUrl: ""
+# victoriametricsUrl is will no longer use the built-in victoriametrics component
+victoriametricsUrl: ""
 
 valkey:
   enabled: true
@@ -85,7 +91,7 @@ registry:
 passport:
   enabled: true
 
-prometheus:
+victoriametrics:
   enabled: true
 
 global:

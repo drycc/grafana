@@ -16,7 +16,7 @@
     ]
   },
   "description": "Summary metrics about kube-state-metrics v2 version(https://github.com/kubernetes/kube-state-metrics); Referenced 6417",
-  "editable": true,
+  "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,

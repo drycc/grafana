@@ -21,23 +21,13 @@ env:
 - name: DRYCC_VALKEY_URL
   value: "redis://:$(DRYCC_VALKEY_PASSWORD)@drycc-valkey.{{.Release.Namespace}}.svc.{{.Values.global.clusterDomain}}:16379/0"
 {{- end }}
-{{- if .Values.victoriametricsUrl }}
-- name: "DRYCC_VICTORIAMETRICS_URL"
-  value: "{{ .Values.victoriametricsUrl }}"
-{{- else if .Values.victoriametrics.enabled }}
-- name: "DRYCC_VICTORIAMETRICS_USERNAME"
+- name: DRYCC_SERVICE_KEY
   valueFrom:
     secretKeyRef:
-      name: victoriametrics-vmauth-creds
-      key: username
-- name: "DRYCC_VICTORIAMETRICS_PASSWORD"
-  valueFrom:
-    secretKeyRef:
-      name: victoriametrics-vmauth-creds
-      key: password
+      name: controller-creds
+      key: service-key
 - name: "DRYCC_VICTORIAMETRICS_URL"
-  value: "http://$(DRYCC_VICTORIAMETRICS_USERNAME):$(DRYCC_VICTORIAMETRICS_PASSWORD)@drycc-victoriametrics-vmauth.{{$.Release.Namespace}}.svc.{{$.Values.global.clusterDomain}}:8427/select/0/prometheus"
-{{- end }}
+  value: "http://$(DRYCC_CONTROLLER_API_SERVICE_HOST):$(DRYCC_CONTROLLER_API_SERVICE_PORT)/v2/prometheus/drycc"
 {{- if .Values.passport.enabled}}
 - name: "DRYCC_PASSPORT_URL"
 {{- if .Values.global.certManagerEnabled }}

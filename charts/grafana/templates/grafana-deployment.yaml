@@ -57,11 +57,7 @@ spec:
           DRYCC_VALKEY_JSON=$(echo "$DRYCC_VALKEY_URL" | jq -R 'capture("^(?<scheme>redis[s]?)://(?<username>[^:]+)?(?::(?<password>[^@]+))?@(?<address>[^/]+)/?(?<db>[0-9]*)$")')
           GF_LIVE_HA_ENGINE_ADDRESS=$(echo "${DRYCC_VALKEY_JSON}" |jq -r '.address')
           GF_LIVE_HA_ENGINE_PASSWORD=$(echo "${DRYCC_VALKEY_JSON}" |jq -r '.password')
-          DRYCC_VICTORIAMETRICS_JSON=$(echo "$DRYCC_VICTORIAMETRICS_URL" | jq -R 'capture("^(?<scheme>https?://)(?<username>[^:@]+):(?<password>[^@]+)@(?<address>.+)$") | {url: "\(.scheme)\(.address)", username: .username, password: .password}')
-          DRYCC_VICTORIAMETRICS_URL=$(echo "${DRYCC_VICTORIAMETRICS_JSON}" |jq -r '.url')
-          DRYCC_VICTORIAMETRICS_USERNAME=$(echo "${DRYCC_VICTORIAMETRICS_JSON}" |jq -r '.username')
-          DRYCC_VICTORIAMETRICS_PASSWORD=$(echo "${DRYCC_VICTORIAMETRICS_JSON}" |jq -r '.password')
-          export GF_LIVE_HA_ENGINE_ADDRESS GF_LIVE_HA_ENGINE_PASSWORD DRYCC_VICTORIAMETRICS_URL DRYCC_VICTORIAMETRICS_USERNAME DRYCC_VICTORIAMETRICS_PASSWORD
+          export GF_LIVE_HA_ENGINE_ADDRESS GF_LIVE_HA_ENGINE_PASSWORD
           exec grafana server --config /usr/share/grafana/grafana.ini --homepath /opt/drycc/grafana
         {{- end }}
         {{- with index .Values "resources" }}

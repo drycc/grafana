@@ -14,7 +14,7 @@ RUN groupadd drycc --gid ${DRYCC_GID} \
 
 COPY . /
 
-RUN install-packages fontconfig \
+RUN install-packages unzip fontconfig \
   && install-stack grafana ${GRAFANA_VERSION} \
   && install-stack jq ${JQ_VERSION} \
   && install-stack caddy $CADDY_VERSION \
@@ -25,6 +25,11 @@ RUN install-packages fontconfig \
   && chown -R ${DRYCC_UID}:${DRYCC_GID} ${DRYCC_HOME_DIR} \
   # set env
   && echo "source ${DRYCC_HOME_DIR}/venv/bin/activate" >> /opt/drycc/python/profile.d/python.sh \
+  # grafana plugin
+  && mkdir ${DRYCC_HOME_DIR}/plugins \
+  && curl -sSL https://github.com/quickwit-oss/quickwit-datasource/releases/download/v0.4.6/quickwit-quickwit-datasource-0.4.6.zip -o quickwit.zip \
+  && unzip quickwit.zip -d ${DRYCC_HOME_DIR}/plugins \
+  && rm -rf quickwit.zip \
   && rm -rf \
       /usr/share/doc \
       /usr/share/man \

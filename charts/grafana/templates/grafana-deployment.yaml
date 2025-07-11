@@ -120,6 +120,12 @@ spec:
         - -ec
         - |
           set -m
+          echo "Waiting for Grafana to come up..."
+          until curl -q --fail --output /dev/null --silent "http://${GF_SECURITY_ADMIN_USER}:${GF_SECURITY_ADMIN_PASSWORD}@localhost:${GF_SERVER_HTTP_PORT:-3000}/api/org"; do
+            printf "."
+            sleep 2
+          done
+          echo "Grafana is up and running."
           python3 oauth2/main.py \
             --port 4000 \
             --client-id $(DRYCC_PASSPORT_KEY) \

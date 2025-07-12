@@ -1,5 +1,19 @@
 apiVersion: 1
 datasources:
+- name: Application Logs
+  type: quickwit-quickwit-datasource
+  access: proxy
+  orgId: 1
+  url: $DRYCC_QUICKWIT_URL
+  jsonData:
+    httpHeaderName1: X-Drycc-Service-Key
+    index: logs-*
+    logMessageField: log
+  secureJsonData:
+    httpHeaderValue1: $DRYCC_SERVICE_KEY
+  version: 1
+  editable: false
+
 - name: Prometheus on Drycc
   type: prometheus
   access: proxy

@@ -144,7 +144,7 @@ spec:
         livenessProbe:
           tcpSocket:
             port: oauth2
-          initialDelaySeconds: 120
+          initialDelaySeconds: 240
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 6
@@ -181,6 +181,12 @@ spec:
         - -ec
         - |
           set -m
+          echo "Waiting for Grafana oauth2 proxy to come up..."
+          until curl -q --fail --output /dev/null --silent "http://localhost:4000/oauth2/healthz"; do
+            printf "."
+            sleep 2
+          done
+          echo "Grafana oauth2 proxy is up and running."
           caddy run --config /usr/share/grafana/Caddyfile
         {{- end }}
         {{- with index .Values "resources" }}
@@ -195,7 +201,7 @@ spec:
         livenessProbe:
           tcpSocket:
             port: proxy
-          initialDelaySeconds: 120
+          initialDelaySeconds: 300
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 6

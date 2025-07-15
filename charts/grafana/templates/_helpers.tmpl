@@ -19,17 +19,19 @@ env:
       name: valkey-creds
       key: password
 - name: DRYCC_VALKEY_URL
-  value: "redis://:$(DRYCC_VALKEY_PASSWORD)@drycc-valkey.{{.Release.Namespace}}.svc.{{.Values.global.clusterDomain}}:16379/0"
+  value: "redis://:$(DRYCC_VALKEY_PASSWORD)@drycc-valkey:16379/0"
 {{- end }}
 - name: DRYCC_SERVICE_KEY
   valueFrom:
     secretKeyRef:
       name: controller-creds
       key: service-key
+- name: "DRYCC_CONTROLLER_URL"
+  value: http://drycc-controller-api
 - name: "DRYCC_QUICKWIT_URL"
-  value: "http://$(DRYCC_CONTROLLER_API_SERVICE_HOST):$(DRYCC_CONTROLLER_API_SERVICE_PORT)/v2/quickwit/drycc"
+  value: "$(DRYCC_CONTROLLER_URL)/v2/quickwit/drycc"
 - name: "DRYCC_VICTORIAMETRICS_URL"
-  value: "http://$(DRYCC_CONTROLLER_API_SERVICE_HOST):$(DRYCC_CONTROLLER_API_SERVICE_PORT)/v2/prometheus/drycc"
+  value: "$(DRYCC_CONTROLLER_URL)/v2/prometheus/drycc"
 {{- if .Values.passport.enabled}}
 - name: "DRYCC_PASSPORT_URL"
 {{- if .Values.global.certManagerEnabled }}
@@ -72,7 +74,7 @@ env:
       name: database-creds
       key: password
 - name: GF_DATABASE_URL
-  value: "postgres://$(GF_DATABASE_USER):$(GF_DATABASE_PASSWORD)@drycc-database.{{.Release.Namespace}}.svc.{{.Values.global.clusterDomain}}:5432/grafana"
+  value: "postgres://$(GF_DATABASE_USER):$(GF_DATABASE_PASSWORD)@drycc-database:5432/grafana"
 {{- end }}
 - name: "GF_SECURITY_ADMIN_USER"
   valueFrom:
@@ -91,7 +93,7 @@ env:
   value: http://drycc-grafana.{{ .Values.global.platformDomain }}
 {{- end}}
 - name: GF_UNIFIED_ALERTING_HA_PEERS
-  value: "drycc-grafana.{{.Release.Namespace}}.svc.{{.Values.global.clusterDomain}}:9094"
+  value: "drycc-grafana:9094"
 - name: GF_UNIFIED_ALERTING_HA_ADVERTISE_ADDRESS
   value: "$(POD_IP):9094"
 {{- range $key, $value := .Values.environment }}

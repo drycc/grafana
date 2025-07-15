@@ -5,11 +5,8 @@ from string import Template
 from psycopg import AsyncConnection
 
 DEFAULT_HEADERS = {"Content-Type": "application/json"}
+DRYCC_CONTROLLER_URL = os.environ.get('DRYCC_CONTROLLER_URL')
 DRYCC_GRAFANA_REFRESH = os.environ.get('DRYCC_GRAFANA_REFRESH', '60s')
-DRYCC_CONTROLLER_API_URL = "http://{}:{}".format(
-    os.environ.get('DRYCC_CONTROLLER_API_SERVICE_HOST'),
-    os.environ.get('DRYCC_CONTROLLER_API_SERVICE_PORT'),
-)
 DRYCC_GRAFANA_DASHBOARD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../")
 
 
@@ -106,14 +103,14 @@ async def sync_datasources(context: dict, token: dict, userinfo: dict):
             with open(os.path.join(datasources_path, filename)) as f:
                 template = Template(f.read())
                 datasource = json.loads(template.substitute(
-                    controller_api_url=DRYCC_CONTROLLER_API_URL,
+                    controller_url=DRYCC_CONTROLLER_URL,
                     username=userinfo["preferred_username"],
                     time_interval=DRYCC_GRAFANA_REFRESH,
                     token=drycc_token
                 ))
                 resp = await client.get(
                     api_url(f"/api/datasources/name/{datasource["name"]}"), headers=headers)
-                if  resp.status_code == 200:
+                if resp.status_code == 200:
                     if created:
                         datasource = resp.json()
                         datasource["secureJsonData"] = {
@@ -166,13 +163,13 @@ async def _get_or_create_drycc_token(username, token: dict):
             if drycc_token:
                 headers = {"Authorization": f"Token {drycc_token}"}
                 resp = await client.get(
-                    f"{DRYCC_CONTROLLER_API_URL}/v2/auth/whoami", headers=headers)
+                    f"{DRYCC_CONTROLLER_URL}/v2/auth/whoami", headers=headers)
                 if resp.status_code in [401, 403]:
                     created = True
             if created:
                 headers = {"Authorization": f"Bearer {token["access_token"]}"}
                 data = (await client.post(
-                    f"{DRYCC_CONTROLLER_API_URL}/v2/auth/token/?alias=grafana-datasource",
+                    f"{DRYCC_CONTROLLER_URL}/v2/auth/token/?alias=grafana-datasource",
                     headers=headers, json=token)).json()
                 drycc_token = data["token"]
             return created, drycc_token

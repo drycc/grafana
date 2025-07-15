@@ -1,7 +1,7 @@
 {
     "name": "Prometheus on Drycc",
     "type": "prometheus",
-    "url": "${controller_api_url}/v2/prometheus/${username}",
+    "url": "${controller_url}/v2/prometheus/${username}",
     "access": "proxy",
     "isDefault": true,
     "basicAuth": false,

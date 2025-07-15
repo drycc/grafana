@@ -3,6 +3,7 @@ redis[asyncio]>=6.2.0
 uvicorn[standard]>=0.15.0
 authlib>=1.0.0
 httpx>=0.23.0
+psycopg[binary]>=3.2.9
 python-jose>=3.3.0
 python-multipart>=0.0.5
 itsdangerous>=2.2.0

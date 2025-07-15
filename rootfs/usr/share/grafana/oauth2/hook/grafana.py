@@ -1,6 +1,7 @@
 import os
 import json
 import httpx
+from psycopg import AsyncConnection
 
 DEFAULT_HEADERS = {"Content-Type": "application/json"}
 DRYCC_GRAFANA_REFRESH = os.environ.get('DRYCC_GRAFANA_REFRESH', '60s')
@@ -112,14 +113,16 @@ async def sync_datasource(context: dict, token: dict, userinfo: dict):
                 datasource["secureJsonData"] = {
                     "httpHeaderValue1": f"Token {drycc_token["token"]}",
                 }
+                await _set_datasource_read_only(False, datasource["id"])
                 await client.put(
                     api_url(f"/api/datasources/uid/{datasource["uid"]}"),
                     headers=api_headers(context, userinfo),
                     json=datasource,
                 )
+                await _set_datasource_read_only(True, datasource["id"])
             return
         drycc_token = await _get_or_create_drycc_token(None, token)
-        await client.post(
+        resp = await client.post(
             api_url("/api/datasources"),
             headers=api_headers(context, userinfo),
             json={
@@ -139,6 +142,7 @@ async def sync_datasource(context: dict, token: dict, userinfo: dict):
                 },
             },
         )
+        await _set_datasource_read_only(True, resp.json()["datasource"]["id"])
 
 
 async def sync_dashboard(context: dict, token: dict, userinfo: dict):
@@ -158,7 +162,17 @@ async def sync_dashboard(context: dict, token: dict, userinfo: dict):
                 )
 
 
-async def _get_or_create_drycc_token(drycc_token_uuid, token: dict):
+async def _set_datasource_read_only(read_only: bool, id: str):
+    async with await AsyncConnection.connect(os.environ.get("GF_DATABASE_URL")) as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                "UPDATE data_source SET read_only=%s WHERE id=%s",
+                (read_only, id)
+            )
+            await conn.commit()
+
+
+async def _get_or_create_drycc_token(drycc_token_uuid: str, token: dict):
     headers = {"Authorization": f"Bearer {token["access_token"]}"}
     async with httpx.AsyncClient() as client:
         if drycc_token_uuid:

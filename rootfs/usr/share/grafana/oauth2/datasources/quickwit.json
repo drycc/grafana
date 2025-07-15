@@ -1,0 +1,15 @@
+{
+    "name": "Application Logs",
+    "type": "quickwit-quickwit-datasource",
+    "url": "${controller_api_url}/v2/quickwit/${username}",
+    "access": "proxy",
+    "basicAuth": false,
+    "jsonData": {
+        "httpHeaderName1": "Authorization",
+        "index": "logs-*",
+        "logMessageField": "log"
+    },
+    "secureJsonData": {
+        "httpHeaderValue1": "Token ${token}"
+    }
+}

@@ -1,7 +1,7 @@
 from .grafana import (
-    init_org, sync_user, sync_role, sync_datasource, sync_alerting, sync_dashboard
+    init_org, sync_user, sync_role, sync_datasources, sync_alerting, sync_dashboards
 )
 
 startup_hooks = [init_org]
-login_hooks = [sync_user, sync_role, sync_datasource, sync_alerting, sync_dashboard]
+login_hooks = [sync_user, sync_role, sync_datasources, sync_alerting, sync_dashboards]
 destroy_hooks = []

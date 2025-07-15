@@ -1,6 +1,7 @@
 import os
 import json
 import httpx
+from string import Template
 from psycopg import AsyncConnection
 
 DEFAULT_HEADERS = {"Content-Type": "application/json"}
@@ -96,60 +97,46 @@ async def sync_alerting(context: dict, token: dict, userinfo: dict):
                 )
 
 
-async def sync_datasource(context: dict, token: dict, userinfo: dict):
-    username = userinfo["preferred_username"]
-    prometheus_url = f"{DRYCC_CONTROLLER_API_URL}/v2/prometheus/{username}"
-    datasource_name = "Prometheus on Drycc"
+async def sync_datasources(context: dict, token: dict, userinfo: dict):
+    headers = api_headers(context, userinfo)
+    datasources_path = os.path.join(os.path.dirname(__file__), "..", "datasources")
+    created, drycc_token = await _get_or_create_drycc_token(userinfo["preferred_username"], token)
     async with httpx.AsyncClient() as client:
-        resp = await client.get(
-            api_url("/api/datasources/name/{datasource_name}"),
-            headers=api_headers(context, userinfo))
-        if resp.status_code == 200:
-            datasource = resp.json()
-            drycc_token_uuid = datasource.get("jsonData", {}).get("tokenId", None)
-            drycc_token = await _get_or_create_drycc_token(drycc_token_uuid, token)
-            if "token" in drycc_token:
-                datasource["jsonData"]["tokenId"] = drycc_token["uuid"]
-                datasource["secureJsonData"] = {
-                    "httpHeaderValue1": f"Token {drycc_token["token"]}",
-                }
-                await _set_datasource_read_only(False, datasource["id"])
-                await client.put(
-                    api_url(f"/api/datasources/uid/{datasource["uid"]}"),
-                    headers=api_headers(context, userinfo),
-                    json=datasource,
-                )
-                await _set_datasource_read_only(True, datasource["id"])
-            return
-        drycc_token = await _get_or_create_drycc_token(None, token)
-        resp = await client.post(
-            api_url("/api/datasources"),
-            headers=api_headers(context, userinfo),
-            json={
-                "name": datasource_name,
-                "type": "prometheus",
-                "url": prometheus_url,
-                "access": "proxy",
-                "basicAuth": False,
-                "jsonData": {
-                    "tokenId": drycc_token["uuid"],
-                    "httpHeaderName1": "Authorization",
-                    "httpMethod": "GET",
-                    "timeInterval": DRYCC_GRAFANA_REFRESH,
-                },
-                "secureJsonData": {
-                    "httpHeaderValue1": f"Token {drycc_token["token"]}",
-                },
-            },
-        )
-        await _set_datasource_read_only(True, resp.json()["datasource"]["id"])
+        for filename in os.listdir(datasources_path):
+            with open(os.path.join(datasources_path, filename)) as f:
+                template = Template(f.read())
+                datasource = json.loads(template.substitute(
+                    controller_api_url=DRYCC_CONTROLLER_API_URL,
+                    username=userinfo["preferred_username"],
+                    time_interval=DRYCC_GRAFANA_REFRESH,
+                    token=drycc_token
+                ))
+                resp = await client.get(
+                    api_url(f"/api/datasources/name/{datasource["name"]}"), headers=headers)
+                if  resp.status_code == 200:
+                    if created:
+                        datasource = resp.json()
+                        datasource["secureJsonData"] = {
+                            "httpHeaderValue1": f"Token {drycc_token}",
+                        }
+                        await _set_datasource_read_only(False, datasource["id"])
+                        await client.put(
+                            api_url(f"/api/datasources/uid/{datasource["uid"]}"),
+                            headers=headers, json=datasource)
+                        await _set_datasource_read_only(True, datasource["id"])
+                elif resp.status_code == 404:
+                    resp = await client.post(
+                        api_url("/api/datasources"), headers=headers, json=datasource)
+                    await _set_datasource_read_only(True, resp.json()["datasource"]["id"])
+                else:
+                    raise ValueError(f"grafana returned an unexpected status: {resp.status_code}")
 
 
-async def sync_dashboard(context: dict, token: dict, userinfo: dict):
-    dashboard_path = os.path.join(os.path.dirname(__file__), "..", "dashboard")
+async def sync_dashboards(context: dict, token: dict, userinfo: dict):
+    dashboards_path = os.path.join(os.path.dirname(__file__), "..", "dashboards")
     async with httpx.AsyncClient() as client:
-        for filename in os.listdir(dashboard_path):
-            with open(os.path.join(dashboard_path, filename)) as f:
+        for filename in os.listdir(dashboards_path):
+            with open(os.path.join(dashboards_path, filename)) as f:
                 dashboard = json.load(f)
                 dashboard.update({"id": None, "refresh": DRYCC_GRAFANA_REFRESH})
                 await client.post(
@@ -172,21 +159,37 @@ async def _set_datasource_read_only(read_only: bool, id: str):
             await conn.commit()
 
 
-async def _get_or_create_drycc_token(drycc_token_uuid: str, token: dict):
-    headers = {"Authorization": f"Bearer {token["access_token"]}"}
-    async with httpx.AsyncClient() as client:
-        if drycc_token_uuid:
-            resp = await client.get(
-                f"{DRYCC_CONTROLLER_API_URL}/v2/tokens/{drycc_token_uuid}", headers=headers)
-            if resp.status_code == 200:
-                return resp.json()
-            elif resp.status_code != 404:
-                raise ValueError(
-                    f"the Drycc controller returned an unsupported status code {resp.status_code}"
+async def _get_or_create_drycc_token(username, token: dict):
+    async def _check_or_create_drycc_token(drycc_token, token):
+        async with httpx.AsyncClient() as client:
+            created = False if drycc_token else True
+            if drycc_token:
+                headers = {"Authorization": f"Token {drycc_token}"}
+                resp = await client.get(
+                    f"{DRYCC_CONTROLLER_API_URL}/v2/auth/whoami", headers=headers)
+                if resp.status_code in [401, 403]:
+                    created = True
+            if created:
+                headers = {"Authorization": f"Bearer {token["access_token"]}"}
+                data = (await client.post(
+                    f"{DRYCC_CONTROLLER_API_URL}/v2/auth/token/?alias=grafana-datasource",
+                    headers=headers, json=token)).json()
+                drycc_token = data["token"]
+            return created, drycc_token
+
+    async with await AsyncConnection.connect(os.environ.get("GF_DATABASE_URL")) as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(
+                "SELECT o_auth_id_token FROM user_auth WHERE auth_module=%s AND auth_id=%s",
+                ("authproxy", username)
+            )
+            drycc_token = (await cursor.fetchone())[0]
+        created, drycc_token = await _check_or_create_drycc_token(drycc_token, token)
+        if created:
+            async with conn.cursor() as cursor:
+                await cursor.execute(
+                    "UPDATE user_auth SET o_auth_id_token=%s WHERE auth_module=%s AND auth_id=%s",
+                    (drycc_token, "authproxy", username)
                 )
-        resp = await client.post(
-            f"{DRYCC_CONTROLLER_API_URL}/v2/auth/token/?alias=grafana-datasource",
-            headers=headers,
-            json=token,
-        )
-        return resp.json()
+                await conn.commit()
+        return created, drycc_token

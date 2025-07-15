@@ -1,0 +1,16 @@
+{
+    "name": "Prometheus on Drycc",
+    "type": "prometheus",
+    "url": "${controller_api_url}/v2/prometheus/${username}",
+    "access": "proxy",
+    "isDefault": true,
+    "basicAuth": false,
+    "jsonData": {
+        "httpHeaderName1": "Authorization",
+        "httpMethod": "GET",
+        "timeInterval": "${time_interval}"
+    },
+    "secureJsonData": {
+        "httpHeaderValue1": "Token ${token}"
+    }
+}

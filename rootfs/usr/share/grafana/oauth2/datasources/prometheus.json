@@ -7,7 +7,7 @@
     "basicAuth": false,
     "jsonData": {
         "httpHeaderName1": "Authorization",
-        "httpMethod": "GET",
+        "httpMethod": "POST",
         "timeInterval": "${time_interval}"
     },
     "secureJsonData": {

@@ -21,6 +21,7 @@ datasources:
   url: $DRYCC_VICTORIAMETRICS_URL
   isDefault: true
   jsonData:
+    httpMethod: POST
     httpHeaderName1: X-Drycc-Service-Key
   secureJsonData:
     httpHeaderValue1: $DRYCC_SERVICE_KEY

@@ -16,6 +16,7 @@ datasources:
   editable: false
 
 - name: Prometheus on Drycc
+  uid: prometheus_on_drycc
   type: prometheus
   access: proxy
   orgId: 1

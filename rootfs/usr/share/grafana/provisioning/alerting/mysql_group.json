@@ -1,0 +1,80 @@
+{
+  "uid": "mysql_group",
+  "title": "mysql group replcation down",
+  "condition": "C",
+  "data": [
+    {
+      "refId": "A",
+      "relativeTimeRange": {
+        "from": 600,
+        "to": 0
+      },
+      "datasourceUid": "prometheus_on_drycc",
+      "model": {
+        "editorMode": "code",
+        "expr": "mysql_perf_schema_replication_group_member_info{member_state!=\"ONLINE\"} == 1",
+        "instant": true,
+        "intervalMs": 1000,
+        "legendFormat": "__auto",
+        "maxDataPoints": 43200,
+        "range": false,
+        "refId": "A"
+      }
+    },
+    {
+      "refId": "C",
+      "relativeTimeRange": {
+        "from": 0,
+        "to": 0
+      },
+      "datasourceUid": "__expr__",
+      "model": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "last"
+            },
+            "type": "query"
+          }
+        ],
+        "datasource": {
+          "type": "__expr__",
+          "uid": "__expr__"
+        },
+        "expression": "A",
+        "intervalMs": 1000,
+        "maxDataPoints": 43200,
+        "refId": "C",
+        "type": "threshold"
+      }
+    }
+  ],
+  "noDataState": "OK",
+  "execErrState": "KeepLast",
+  "for": "2m",
+  "ruleGroup": "middle",
+  "annotations": {
+    "description": "MySQL group replication {{$labels.namespace}} {{$labels.pod}} on {{$labels.node}} is not up.",
+    "summary": "MySQL group replication not up."
+  },
+  "isPaused": false,
+  "notification_settings": {
+    "receiver": "grafana-default-email"
+  },
+  "folderUID": "pod"
+}

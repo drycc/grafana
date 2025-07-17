@@ -1,0 +1,86 @@
+{
+  "uid": "pod_restart",
+  "title": "pod restart",
+  "annotations": {
+    "description": "namespace: {{ $labels.namespace }}, pod: {{ $labels.pod }} restart.",
+    "summary": "Pod restart alert"
+  },
+  "condition": "C",
+  "data": [
+    {
+      "datasourceUid": "prometheus_on_drycc",
+      "model": {
+        "editorMode": "code",
+        "expr": "increase(kube_pod_container_status_restarts_total{pod!~\".*job.*\"}[30m]) > 0",
+        "instant": true,
+        "intervalMs": 1000,
+        "legendFormat": "__auto",
+        "maxDataPoints": 43200,
+        "range": false,
+        "refId": "A"
+      },
+      "queryType": "",
+      "refId": "A",
+      "relativeTimeRange": {
+        "from": 600,
+        "to": 0
+      }
+    },
+    {
+      "datasourceUid": "__expr__",
+      "model": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "last"
+            },
+            "type": "query"
+          }
+        ],
+        "datasource": {
+          "type": "__expr__",
+          "uid": "__expr__"
+        },
+        "expression": "A",
+        "intervalMs": 1000,
+        "maxDataPoints": 43200,
+        "refId": "C",
+        "type": "threshold"
+      },
+      "queryType": "",
+      "refId": "C",
+      "relativeTimeRange": {
+        "from": 0,
+        "to": 0
+      }
+    }
+  ],
+  "execErrState": "OK",
+  "folderUID": "pod",
+  "id": 1,
+  "isPaused": false,
+  "keep_firing_for": "2m",
+  "noDataState": "OK",
+  "notification_settings": {
+    "receiver": "grafana-default-email"
+  },
+  "orgID": 1,
+  "record": null,
+  "ruleGroup": "middle",
+  "for": "2m"
+}

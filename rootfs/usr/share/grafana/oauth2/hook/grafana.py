@@ -82,14 +82,28 @@ async def sync_role(context: dict, token: dict, userinfo: dict):
     await init_org(org_id=context["org_id"], name=userinfo["preferred_username"])
 
 
+async def sync_folder(context: dict, token: dict, userinfo: dict):
+    folder_path = os.path.join(os.path.dirname(__file__), "..", "folder")
+    async with httpx.AsyncClient() as client:
+        for filename in os.listdir(folder_path):
+            with open(os.path.join(folder_path, filename)) as f:
+                await client.post(
+                    api_url("/api/folders"),
+                    headers=api_headers(context, userinfo),
+                    json=json.load(f),
+                )
+
+
 async def sync_alerting(context: dict, token: dict, userinfo: dict):
     alerting_path = os.path.join(os.path.dirname(__file__), "..", "alerting")
     async with httpx.AsyncClient() as client:
         for filename in os.listdir(alerting_path):
             with open(os.path.join(alerting_path, filename)) as f:
+                headers = api_headers(context, userinfo)
+                headers["X-Disable-Provenance"] = True
                 await client.post(
                     api_url("/api/v1/provisioning/alert-rules"),
-                    headers=api_headers(context, userinfo),
+                    headers=headers,
                     json=json.load(f),
                 )
 

@@ -4,6 +4,7 @@ datasources:
   type: quickwit-quickwit-datasource
   access: proxy
   orgId: 1
+  uid: application_logs
   url: $DRYCC_QUICKWIT_URL
   jsonData:
     httpHeaderName1: X-Drycc-Service-Key
@@ -18,6 +19,7 @@ datasources:
   type: prometheus
   access: proxy
   orgId: 1
+  uid: prometheus_on_drycc
   url: $DRYCC_VICTORIAMETRICS_URL
   isDefault: true
   jsonData:

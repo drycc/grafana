@@ -132,6 +132,11 @@ async def sync_datasources(context: dict, token: dict, userinfo: dict):
 async def sync_dashboards(context: dict, token: dict, userinfo: dict):
     dashboards_path = os.path.join(os.path.dirname(__file__), "..", "dashboards")
     async with httpx.AsyncClient() as client:
+        await client.post(
+            api_url("/api/folders"),
+            headers=api_headers(context, userinfo),
+            json={"uid": "drycc", "title": "drycc"},
+        )
         for filename in os.listdir(dashboards_path):
             with open(os.path.join(dashboards_path, filename)) as f:
                 dashboard = json.load(f)
@@ -141,6 +146,7 @@ async def sync_dashboards(context: dict, token: dict, userinfo: dict):
                     headers=api_headers(context, userinfo),
                     json={
                         "dashboard": dashboard,
+                        "folderUid": "drycc",
                         "overwrite": True,
                     },
                 )

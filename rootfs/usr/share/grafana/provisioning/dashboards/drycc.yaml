@@ -2,8 +2,9 @@ apiVersion: 1
 providers:
 - name: 'default'
   orgId: 1
-  folder: 'drycc'
-  folderUid: 'drycc'
   type: file
   options:
     path: /usr/share/grafana/dashboards
+  folder: 'drycc'
+  allowUiUpdates: false
+  disableDeletion: true

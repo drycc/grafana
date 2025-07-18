@@ -21,27 +21,12 @@
       }
     ]
   },
-  "description": "Application Logs. See also the Explore tab for ad-hoc log queries.",
+  "description": "General Drycc Logs metrics.",
   "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": 61,
-  "links": [
-    {
-      "asDropdown": false,
-      "icon": "external link",
-      "includeVars": true,
-      "keepTime": true,
-      "tags": [
-        "drycc"
-      ],
-      "targetBlank": false,
-      "title": "Drycc",
-      "tooltip": "",
-      "type": "dashboards",
-      "url": ""
-    }
-  ],
+  "links": [],
   "panels": [
     {
       "datasource": {
@@ -149,7 +134,7 @@
               "type": "count"
             }
           ],
-          "query": "kubernetes.namespace_name:${app:singlequote} kubernetes.pod_name:${instance:singlequote} ${query:text}",
+          "query": "kubernetes.namespace_name:${app:singlequote} kubernetes.pod_name:${instance:singlequote} ${query:text} -kubernetes.container_name:drycc-controller",
           "refId": "A",
           "timeField": ""
         }
@@ -210,7 +195,7 @@
               "type": "logs"
             }
           ],
-          "query": "kubernetes.namespace_name:${app:singlequote} kubernetes.pod_name:${instance:singlequote} ${query:text}",
+          "query": "kubernetes.namespace_name:${app:singlequote} kubernetes.pod_name:${instance:singlequote} ${query:text} -kubernetes.container_name:drycc-controller",
           "refId": "A",
           "timeField": ""
         }
@@ -222,7 +207,7 @@
   "preload": false,
   "refresh": "",
   "schemaVersion": 41,
-  "tags": [],
+  "tags": ["drycc"],
   "templating": {
     "list": [
       {

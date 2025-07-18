@@ -82,6 +82,15 @@ async def sync_role(context: dict, token: dict, userinfo: dict):
     await init_org(org_id=context["org_id"], name=userinfo["preferred_username"])
 
 
+async def sync_folder(context: dict, token: dict, userinfo: dict):
+    async with httpx.AsyncClient() as client:
+        await client.post(
+            api_url("/api/folders"),
+            headers=api_headers(context, userinfo),
+            json={"uid": "drycc", "title": "drycc"},
+        )
+
+
 async def sync_alerting(context: dict, token: dict, userinfo: dict):
     alerting_path = os.path.join(os.path.dirname(__file__), "..", "alerting")
     async with httpx.AsyncClient() as client:
@@ -132,11 +141,6 @@ async def sync_datasources(context: dict, token: dict, userinfo: dict):
 async def sync_dashboards(context: dict, token: dict, userinfo: dict):
     dashboards_path = os.path.join(os.path.dirname(__file__), "..", "dashboards")
     async with httpx.AsyncClient() as client:
-        await client.post(
-            api_url("/api/folders"),
-            headers=api_headers(context, userinfo),
-            json={"uid": "drycc", "title": "drycc"},
-        )
         for filename in os.listdir(dashboards_path):
             with open(os.path.join(dashboards_path, filename)) as f:
                 dashboard = json.load(f)

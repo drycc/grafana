@@ -37,7 +37,7 @@ spec:
           - netcat
           - -v
           - -u
-          - $(GF_DATABASE_URL)
+          - $(GF_DATABASE_URL),http://drycc-controller-api
         {{- include "grafana.envs" . | indent 8 }}
       containers:
       - name: drycc-grafana

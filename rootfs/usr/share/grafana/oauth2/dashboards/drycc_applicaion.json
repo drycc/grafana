@@ -11,11 +11,11 @@
       }
     ]
   },
-  "description": "Simple dashborad for drycc cadvisor only",
-  "editable": true,
+  "description": "General Drycc App metrics.",
+  "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 72,
+  "id": 19,
   "links": [],
   "panels": [
     {
@@ -26,177 +26,78 @@
         "x": 0,
         "y": 0
       },
-      "id": 8,
+      "id": 35,
       "panels": [],
-      "title": "CPU",
+      "title": "Logs",
       "type": "row"
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "quickwit-quickwit-datasource",
+        "uid": "application_logs"
       },
+      "description": "",
       "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisBorderShow": false,
-            "axisCenteredZero": false,
-            "axisColorMode": "text",
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "barWidthFactor": 0.6,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "insertNulls": false,
-            "lineInterpolation": "linear",
-            "lineWidth": 1,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "decimals": 2,
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "percent"
-        },
+        "defaults": {},
         "overrides": []
       },
       "gridPos": {
         "h": 8,
-        "w": 20,
+        "w": 19,
         "x": 0,
         "y": 1
       },
-      "id": 15,
+      "id": 34,
       "options": {
-        "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "displayMode": "table",
-          "placement": "right",
-          "showLegend": true
-        },
-        "tooltip": {
-          "hideZeros": false,
-          "mode": "multi",
-          "sort": "none"
-        }
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": true,
+        "prettifyLogMessage": true,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Descending",
+        "wrapLogMessage": true
       },
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=~\"$app\",container!=\"\"}[5m])) by (pod) \n/\n(\n  sum(container_spec_cpu_quota{namespace=~\"$app\",container!=\"\"}) by (pod)  / 10000000\n)",
-          "hide": false,
-          "interval": "",
-          "legendFormat": "{{pod}}",
-          "range": true,
-          "refId": "A"
-        }
-      ],
-      "title": "CPU Load 5m",
-      "type": "timeseries"
-    },
-    {
-      "datasource": {
-        "type": "prometheus",
-        "uid": "PF6837BEDE254B550"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
+          "alias": "",
+          "bucketAggs": [
+            {
+              "field": "",
+              "id": "2",
+              "settings": {
+                "interval": "auto"
               },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 4,
-        "x": 20,
-        "y": 1
-      },
-      "id": 22,
-      "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
-        "percentChangeColorMode": "standard",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
+              "type": "date_histogram"
+            }
           ],
-          "fields": "",
-          "values": false
-        },
-        "showPercentChange": false,
-        "textMode": "auto",
-        "wideLayout": true
-      },
-      "pluginVersion": "12.0.2",
-      "targets": [
-        {
-          "editorMode": "code",
-          "exemplar": false,
-          "expr": "sum((container_spec_cpu_quota{namespace=~\"$app\",container!=\"\"}/1000)/100)",
-          "instant": true,
-          "legendFormat": "Total CPU Cores",
-          "range": false,
-          "refId": "A"
+          "datasource": {
+            "type": "quickwit-quickwit-datasource",
+            "uid": "application_logs"
+          },
+          "metrics": [
+            {
+              "id": "1",
+              "settings": {},
+              "type": "logs"
+            }
+          ],
+          "query": "kubernetes.namespace_name:${app:singlequote} kubernetes.container_name:drycc-controller",
+          "refId": "A",
+          "timeField": ""
         }
       ],
-      "title": "Total CPU Cores",
-      "type": "stat"
+      "title": "",
+      "type": "logs"
     },
     {
       "datasource": {
-        "type": "prometheus"
+        "type": "quickwit-quickwit-datasource",
+        "uid": "application_logs"
       },
+      "description": "[Query Language](https://quickwit.io/docs/reference/query-language)",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -208,6 +109,7 @@
             "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
+            "axisSoftMin": 0,
             "barAlignment": 0,
             "barWidthFactor": 0.6,
             "drawStyle": "line",
@@ -253,17 +155,18 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 9
+        "w": 5,
+        "x": 19,
+        "y": 1
       },
-      "id": 21,
+      "id": 36,
+      "interval": "1m",
       "options": {
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "right",
-          "showLegend": true
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "hideZeros": false,
@@ -274,16 +177,300 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          "editorMode": "code",
-          "expr": "(increase(container_cpu_cfs_throttled_periods_total{namespace=~\"$app\",container!=\"\" }[5m]))/\n(increase(container_cpu_cfs_periods_total{namespace=~\"$app\",container!=\"\"}[5m]))",
-          "instant": false,
-          "legendFormat": "{{pod}}",
-          "range": true,
-          "refId": "A"
+          "alias": "",
+          "bucketAggs": [
+            {
+              "field": "",
+              "id": "2",
+              "settings": {
+                "interval": "auto"
+              },
+              "type": "date_histogram"
+            }
+          ],
+          "datasource": {
+            "type": "quickwit-quickwit-datasource",
+            "uid": "application_logs"
+          },
+          "metrics": [
+            {
+              "id": "1",
+              "type": "count"
+            }
+          ],
+          "query": "kubernetes.namespace_name:${app:singlequote} kubernetes.container_name:drycc-controller",
+          "refId": "A",
+          "timeField": ""
         }
       ],
-      "title": "CPUThrottling ",
+      "title": "Logs volume",
       "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 8,
+      "panels": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 10,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "never",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 2,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              },
+              "unit": "percent"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 19,
+            "x": 0,
+            "y": 10
+          },
+          "id": 15,
+          "options": {
+            "legend": {
+              "calcs": ["lastNotNull"],
+              "displayMode": "table",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "multi",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "editorMode": "code",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{namespace=~\"$app\",container!=\"\"}[5m])) by (pod) \n/\n(\n  sum(container_spec_cpu_quota{namespace=~\"$app\",container!=\"\"}) by (pod)  / 10000000\n)",
+              "hide": false,
+              "interval": "",
+              "legendFormat": "{{pod}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "CPU Load 5m",
+          "type": "timeseries"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 5,
+            "x": 19,
+            "y": 10
+          },
+          "id": 22,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "percentChangeColorMode": "standard",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "showPercentChange": false,
+            "textMode": "auto",
+            "wideLayout": true
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "editorMode": "code",
+              "exemplar": false,
+              "expr": "sum((container_spec_cpu_quota{namespace=~\"$app\",container!=\"\"}/1000)/100)",
+              "instant": true,
+              "legendFormat": "Total CPU Cores",
+              "range": false,
+              "refId": "A"
+            }
+          ],
+          "title": "Total CPU Cores",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 18
+          },
+          "id": 21,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "right",
+              "showLegend": true
+            },
+            "tooltip": {
+              "hideZeros": false,
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "12.0.2",
+          "targets": [
+            {
+              "editorMode": "code",
+              "expr": "(increase(container_cpu_cfs_throttled_periods_total{namespace=~\"$app\",container!=\"\" }[5m]))/\n(increase(container_cpu_cfs_periods_total{namespace=~\"$app\",container!=\"\"}[5m]))",
+              "instant": false,
+              "legendFormat": "{{pod}}",
+              "range": true,
+              "refId": "A"
+            }
+          ],
+          "title": "CPUThrottling ",
+          "type": "timeseries"
+        }
+      ],
+      "title": "CPU",
+      "type": "row"
     },
     {
       "collapsed": false,
@@ -291,7 +478,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 10
       },
       "id": 11,
       "panels": [],
@@ -301,7 +488,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PF6837BEDE254B550"
+        "uid": "prometheus_on_drycc"
       },
       "fieldConfig": {
         "defaults": {
@@ -360,16 +547,14 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 20,
+        "w": 19,
         "x": 0,
-        "y": 18
+        "y": 11
       },
       "id": 14,
       "options": {
         "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "displayMode": "table",
           "placement": "right",
           "showLegend": true,
@@ -413,7 +598,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PF6837BEDE254B550"
+        "uid": "prometheus_on_drycc"
       },
       "fieldConfig": {
         "defaults": {
@@ -439,9 +624,9 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 4,
-        "x": 20,
-        "y": 18
+        "w": 5,
+        "x": 19,
+        "y": 11
       },
       "id": 33,
       "options": {
@@ -451,9 +636,7 @@
         "orientation": "auto",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -480,7 +663,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 18
       },
       "id": 2,
       "panels": [],
@@ -490,7 +673,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PF6837BEDE254B550"
+        "uid": "prometheus_on_drycc"
       },
       "fieldConfig": {
         "defaults": {
@@ -551,14 +734,12 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 26
+        "y": 19
       },
       "id": 4,
       "options": {
         "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "displayMode": "table",
           "placement": "right",
           "showLegend": true
@@ -600,7 +781,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PF6837BEDE254B550"
+        "uid": "prometheus_on_drycc"
       },
       "fieldConfig": {
         "defaults": {
@@ -661,14 +842,12 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 26
+        "y": 19
       },
       "id": 6,
       "options": {
         "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "displayMode": "table",
           "placement": "right",
           "showLegend": true
@@ -712,17 +891,17 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 34
+        "y": 27
       },
       "id": 27,
       "panels": [],
-      "title": "TmpDisk",
+      "title": "Volume",
       "type": "row"
     },
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "PF6837BEDE254B550"
+        "uid": "prometheus_on_drycc"
       },
       "fieldConfig": {
         "defaults": {
@@ -783,14 +962,12 @@
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 35
+        "y": 28
       },
       "id": 28,
       "options": {
         "legend": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "displayMode": "table",
           "placement": "right",
           "showLegend": true
@@ -830,7 +1007,10 @@
       "type": "timeseries"
     },
     {
-
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_on_drycc"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -889,7 +1069,7 @@
         "h": 9,
         "w": 12,
         "x": 12,
-        "y": 35
+        "y": 28
       },
       "id": 30,
       "options": {
@@ -929,12 +1109,16 @@
     }
   ],
   "preload": false,
-  "refresh": "",
+  "refresh": "60s",
   "schemaVersion": 41,
-  "tags": [],
+  "tags": ["drycc"],
   "templating": {
     "list": [
       {
+        "current": {
+          "text": "demo1",
+          "value": "demo1"
+        },
         "definition": "label_values(namespace)",
         "includeAll": false,
         "label": "app",
@@ -959,5 +1143,5 @@
   "timezone": "",
   "title": "Drycc App",
   "uid": "cerzlzfbcevapp",
-  "version": 14
+  "version": 9
 }

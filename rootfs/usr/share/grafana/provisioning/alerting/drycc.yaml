@@ -59,6 +59,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: deq6i5dvnlkw0e
           editable: true
           title: pod cpu usage over 80%
@@ -112,6 +113,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: beq6l7fts9nnke
           title: pod memory usage over 80%
           condition: C
@@ -165,6 +167,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: eeq6lm6biyfb4e
           title: pod start fail
           condition: C
@@ -217,6 +220,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: feq6m6yr27togc
           title: job exec error
           condition: C
@@ -269,6 +273,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: beqhp6i29jx8gb
           title: pvc usage over 80%
           condition: C
@@ -321,6 +326,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: deqhpblphb7k0c
           title: mysql down
           condition: C
@@ -373,6 +379,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: feqhpe2zz56o0d
           title: mysql group replcation down
           condition: C
@@ -425,6 +432,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
     - orgId: 1
       name: high
       folder: drycc
@@ -482,6 +490,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: eeq6lu5wz3eo0c
           title: cluster node over pressure
           condition: C
@@ -534,6 +543,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: deq6lwic91slce
           title: cluster node status error
           condition: C
@@ -586,6 +596,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
     - orgId: 1
       name: middle
       folder: drycc
@@ -643,6 +654,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: ceqhohsqqyr5sb
           title: node memory usage over 80%
           condition: C
@@ -695,6 +707,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
         - uid: aeqhp0wbcsb9cf
           title: node systen disk usage over 80%
           condition: C
@@ -747,6 +760,7 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc
     - orgId: 1
       name: slow
       folder: drycc
@@ -803,3 +817,4 @@ groups:
           isPaused: false
           notification_settings:
             receiver: grafana-default-email
+          folderUID: drycc

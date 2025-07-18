@@ -11,8 +11,8 @@
       }
     ]
   },
-  "description": "Simple dashborad for drycc instance only",
-  "editable": true,
+  "description": "General Drycc Instance metrics.",
+  "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 69,
@@ -29,6 +29,10 @@
       "id": 8,
       "panels": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -94,9 +98,7 @@
           "id": 15,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true
@@ -132,6 +134,10 @@
           "type": "timeseries"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -167,9 +173,7 @@
             "orientation": "auto",
             "percentChangeColorMode": "standard",
             "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "fields": "",
               "values": false
             },
@@ -193,6 +197,10 @@
           "type": "stat"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -296,6 +304,10 @@
       "id": 11,
       "panels": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -360,9 +372,7 @@
           "id": 9,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true,
@@ -409,6 +419,10 @@
           "type": "timeseries"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -473,9 +487,7 @@
           "id": 14,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true
@@ -516,6 +528,10 @@
       "id": 2,
       "panels": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -580,9 +596,7 @@
           "id": 4,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true
@@ -609,6 +623,10 @@
           "type": "timeseries"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -673,9 +691,7 @@
           "id": 6,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true
@@ -715,6 +731,10 @@
       "id": 23,
       "panels": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -779,9 +799,7 @@
           "id": 24,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true
@@ -816,6 +834,10 @@
           "type": "timeseries"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -879,9 +901,7 @@
           "id": 26,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true
@@ -930,6 +950,10 @@
       "id": 27,
       "panels": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -994,9 +1018,7 @@
           "id": 28,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true
@@ -1023,6 +1045,10 @@
           "type": "timeseries"
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus_on_drycc"
+          },
           "fieldConfig": {
             "defaults": {
               "color": {
@@ -1086,9 +1112,7 @@
           "id": 30,
           "options": {
             "legend": {
-              "calcs": [
-                "lastNotNull"
-              ],
+              "calcs": ["lastNotNull"],
               "displayMode": "table",
               "placement": "right",
               "showLegend": true
@@ -1120,11 +1144,10 @@
   "preload": false,
   "refresh": "",
   "schemaVersion": 41,
-  "tags": [],
+  "tags": ["drycc"],
   "templating": {
     "list": [
       {
-
         "definition": "label_values(namespace)",
         "includeAll": false,
         "label": "app",
@@ -1141,7 +1164,7 @@
       },
       {
         "allowCustomValue": false,
-    
+
         "definition": "label_values({namespace=\"$app\"},pod)",
         "includeAll": false,
         "label": "instance",

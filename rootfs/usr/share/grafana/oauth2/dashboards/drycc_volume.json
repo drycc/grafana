@@ -11,14 +11,18 @@
       }
     ]
   },
-  "description": "volume usage",
-  "editable": true,
+  "description": "General Drycc Volume metrics.",
+  "editable": false,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 74,
   "links": [],
   "panels": [
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_on_drycc"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -84,12 +88,7 @@
       "id": 2,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max",
-            "min"
-          ],
+          "calcs": ["mean", "lastNotNull", "max", "min"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -103,7 +102,6 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          
           "editorMode": "code",
           "expr": "(\n  sum without(instance, node) (kubelet_volume_stats_capacity_bytes{cluster=\"$cluster\", job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n  -\n  sum without(instance, node) (kubelet_volume_stats_available_bytes{cluster=\"$cluster\", job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n)\n",
           "format": "time_series",
@@ -113,7 +111,6 @@
           "refId": "A"
         },
         {
-          
           "editorMode": "code",
           "expr": "sum without(instance, node) (kubelet_volume_stats_available_bytes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n",
           "format": "time_series",
@@ -127,7 +124,10 @@
       "type": "timeseries"
     },
     {
-      
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_on_drycc"
+      },
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
@@ -179,9 +179,7 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -192,7 +190,6 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          
           "editorMode": "code",
           "expr": "(\n  kubelet_volume_stats_capacity_bytes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n  -\n  kubelet_volume_stats_available_bytes{ job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n)\n/\nkubelet_volume_stats_capacity_bytes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n* 100\n",
           "format": "time_series",
@@ -206,7 +203,10 @@
       "type": "stat"
     },
     {
-      
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_on_drycc"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -272,12 +272,7 @@
       "id": 4,
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max",
-            "min"
-          ],
+          "calcs": ["mean", "lastNotNull", "max", "min"],
           "displayMode": "table",
           "placement": "bottom",
           "showLegend": true
@@ -291,7 +286,6 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          
           "editorMode": "code",
           "expr": "sum without(instance, node) (kubelet_volume_stats_inodes_used{ job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n",
           "format": "time_series",
@@ -301,7 +295,6 @@
           "refId": "A"
         },
         {
-          
           "editorMode": "code",
           "expr": "(\n  sum without(instance, node) (kubelet_volume_stats_inodes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n  -\n  sum without(instance, node) (kubelet_volume_stats_inodes_used{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n)\n",
           "format": "time_series",
@@ -315,7 +308,10 @@
       "type": "timeseries"
     },
     {
-      
+      "datasource": {
+        "type": "prometheus",
+        "uid": "prometheus_on_drycc"
+      },
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
@@ -367,9 +363,7 @@
         "orientation": "horizontal",
         "percentChangeColorMode": "standard",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -380,7 +374,6 @@
       "pluginVersion": "12.0.2",
       "targets": [
         {
-          
           "editorMode": "code",
           "expr": "kubelet_volume_stats_inodes_used{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n/\nkubelet_volume_stats_inodes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n* 100\n",
           "format": "time_series",
@@ -397,10 +390,7 @@
   "preload": false,
   "refresh": "",
   "schemaVersion": 41,
-  "tags": [
-    "kubernetes-mixin",
-    "volume"
-  ],
+  "tags": ["drycc"],
   "templating": {
     "list": [
       {

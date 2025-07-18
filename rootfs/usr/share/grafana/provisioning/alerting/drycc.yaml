@@ -1,1 +1,805 @@
 apiVersion: 1
+groups:
+    - orgId: 1
+      name: middle
+      folder: drycc
+      interval: 2m
+      rules:
+        - uid: eeq3o5l9asa2od
+          editable: true
+          title: pod restart
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: increase(kube_pod_container_status_restarts_total{pod!~".*job.*"}[30m]) > 0
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          keepFiringFor: 2m
+          annotations:
+            description: 'namespace: {{ $labels.namespace }}, pod: {{ $labels.pod }} restart.'
+            summary: Pod restart alert
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: deq6i5dvnlkw0e
+          editable: true
+          title: pod cpu usage over 80%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: (sum(rate(container_cpu_usage_seconds_total{image!=""}[2m])) by (pod,namespace)/sum(kube_pod_container_resource_limits{resource="cpu"}) by (pod,namespace)  * 100) > 80
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: 'namespace: {{ $labels.namespace }}, pod: {{ $labels.pod }} ''s cpu usage over {{$value }}%.'
+            summary: CPU Usage of Pod limit on has exceeded 80%.
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: beq6l7fts9nnke
+          title: pod memory usage over 80%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: (sum(container_memory_working_set_bytes{pod!="",container!=""}) by (pod, namespace)) / (sum(container_spec_memory_limit_bytes{pod!=""}) by (pod, namespace)) > 0.8 and (sum(container_memory_working_set_bytes{pod!="",container!=""}) by (pod, namespace)) / (sum (container_spec_memory_limit_bytes{pod!=""}) by (pod, namespace)) < 2
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          keepFiringFor: 2m
+          annotations:
+            description: 'namespace: {{ $labels.namespace }}, pod: {{ $labels.pod }} ''s memory usage over {{ $value }}%.'
+            summary: Memory Usage of Pod limit  on  has exceeded 80%.
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: eeq6lm6biyfb4e
+          title: pod start fail
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: kube_pod_status_phase{pod!~".*job.*", phase=~"Failed|Unknown"} == 1
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: 'namespace: {{ $labels.namespace }}, pod: {{ $labels.pod }} start fail.'
+            summary: Pod start fail
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: feq6m6yr27togc
+          title: job exec error
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: kube_job_status_failed{job="drycc-kube-state-metrics"} == 1
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: 'namespace: {{ $labels.namespace }}, job: {{ $labels.job_name }} exec {{ $labels.reason }}.'
+            summary: Job exec error
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: beqhp6i29jx8gb
+          title: pvc usage over 80%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: kubelet_volume_stats_used_bytes{job="kubernetes-nodes"} / kubelet_volume_stats_capacity_bytes{job="kubernetes-nodes"} > 0.8
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: pvc capacity {{$labels.namespace}} {{$labels.persistentvolumeclaim}} on {{$labels.topology_topolvm_io_node}} usage over  {{$value }}%.
+            summary: Pvc usage over 80%
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: deqhpblphb7k0c
+          title: mysql down
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: mysql_up != 1
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: MySQL {{$labels.namespace}} {{$labels.pod}} on {{$labels.node}} is not up.
+            summary: MySQL not up.
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: feqhpe2zz56o0d
+          title: mysql group replcation down
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: mysql_perf_schema_replication_group_member_info{member_state!="ONLINE"} == 1
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: MySQL group replication {{$labels.namespace}} {{$labels.pod}} on {{$labels.node}} is not up.
+            summary: MySQL group replication not up.
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+    - orgId: 1
+      name: high
+      folder: drycc
+      interval: 1m
+      rules:
+        - uid: beq6ljd99ukg0c
+          title: node down
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: up{job="drycc-node-exporter"} == 0
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 1m
+          annotations:
+            description: 'node: {{ $labels.instance }}  down.'
+            summary: Node down
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: eeq6lu5wz3eo0c
+          title: cluster node over pressure
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: kube_node_status_condition{condition=~"OutOfDisk|MemoryPressure|DiskPressure",status!="false"} == 1
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 1m
+          annotations:
+            description: 'node: {{ $labels.node }} has {{ $labels.condition }}.'
+            summary: Cluster node over pressure
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: deq6lwic91slce
+          title: cluster node status error
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: kube_node_status_condition{condition="Ready",status!="true"} == 1
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 1m
+          annotations:
+            description: 'node: {{ $labels.node }} status error.'
+            summary: Cluster node status error
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+    - orgId: 1
+      name: middle
+      folder: drycc
+      interval: 2m
+      rules:
+        - uid: beq6ptjdxwmpsc
+          title: node cpu usage over 80%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: (1 - avg by (instance) (irate(node_cpu_seconds_total{job="drycc-node-exporter",mode="idle"}[5m])))  * 100 > 80
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: 'instance: {{ $labels.instance }} cpu usage over {{ $value }}%'
+            summary: Node cpu high over 80
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: ceqhohsqqyr5sb
+          title: node memory usage over 80%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: (1-(node_memory_MemAvailable_bytes{job="drycc-node-exporter"} / (node_memory_MemTotal_bytes{job="drycc-node-exporter"})))* 100 > 80
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: 'instance: {{ $labels.instance }} memory usage over {{ $value }}%.'
+            summary: Node memory over 80
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+        - uid: aeqhp0wbcsb9cf
+          title: node systen disk usage over 80%
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: (1 - node_filesystem_avail_bytes{job="drycc-node-exporter",fstype=~"ext4|xfs"} / node_filesystem_size_bytes{job="drycc-node-exporter",fstype=~"ext4|xfs"}) * 100 > 80
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          for: 2m
+          annotations:
+            description: 'instance: {{ $labels.instance }} disk usage over {{ $value }}%.'
+            summary: Node systen disk usage over 80
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email
+    - orgId: 1
+      name: slow
+      folder: drycc
+      interval: 1d
+      rules:
+        - uid: feq6lfrsmsum8a
+          title: node certificate expiration
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 600
+                to: 0
+              datasourceUid: prometheus_on_drycc
+              model:
+                editorMode: code
+                expr: ((x509_cert_not_after - time()) / 86400) < 15
+                instant: true
+                intervalMs: 1000
+                legendFormat: __auto
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: OK
+          execErrState: KeepLast
+          annotations:
+            description: 'node: {{ $labels.node}} cert: {{ $labels.filepath }} will expire in {{ $labels.value }} days.'
+            summary: Node certificate expiration
+          isPaused: false
+          notification_settings:
+            receiver: grafana-default-email

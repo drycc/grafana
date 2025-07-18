@@ -1,0 +1,80 @@
+{
+  "uid": "pod_cpu",
+  "title": "pod cpu usage over 80%",
+  "condition": "C",
+  "data": [
+    {
+      "refId": "A",
+      "relativeTimeRange": {
+        "from": 600,
+        "to": 0
+      },
+      "datasourceUid": "prometheus_on_drycc",
+      "model": {
+        "editorMode": "code",
+        "expr": "(sum(rate(container_cpu_usage_seconds_total{image!=\"\"}[2m])) by (pod,namespace)/sum(kube_pod_container_resource_limits{resource=\"cpu\"}) by (pod,namespace)  * 100) \u003e 80",
+        "instant": true,
+        "intervalMs": 1000,
+        "legendFormat": "__auto",
+        "maxDataPoints": 43200,
+        "range": false,
+        "refId": "A"
+      }
+    },
+    {
+      "refId": "C",
+      "relativeTimeRange": {
+        "from": 0,
+        "to": 0
+      },
+      "datasourceUid": "__expr__",
+      "model": {
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                0
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "C"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "last"
+            },
+            "type": "query"
+          }
+        ],
+        "datasource": {
+          "type": "__expr__",
+          "uid": "__expr__"
+        },
+        "expression": "A",
+        "intervalMs": 1000,
+        "maxDataPoints": 43200,
+        "refId": "C",
+        "type": "threshold"
+      }
+    }
+  ],
+  "noDataState": "OK",
+  "execErrState": "KeepLast",
+  "for": "2m",
+  "ruleGroup": "middle",
+  "annotations": {
+    "description": "namespace: {{ $labels.namespace }}, pod: {{ $labels.pod }} 's cpu usage over {{$value }}%.",
+    "summary": "CPU Usage of Pod limit on has exceeded 80%."
+  },
+  "isPaused": false,
+  "notification_settings": {
+    "receiver": "grafana-default-email"
+  },
+  "folderUID": "drycc"
+}

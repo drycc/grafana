@@ -53,8 +53,8 @@ service:
 
 persistence:
   enabled: false
-  accessMode: ReadWriteOnce
   size: 5Gi
+  storageClass: ""
 # Any custom grafana environment variables
 # can be specified as key-value pairs under environment
 # this is usually a non required setting.

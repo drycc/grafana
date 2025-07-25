@@ -25,11 +25,11 @@ RUN install-packages unzip fontconfig \
   && chown -R ${DRYCC_UID}:${DRYCC_GID} ${DRYCC_HOME_DIR} \
   # set env
   && echo "source ${DRYCC_HOME_DIR}/venv/bin/activate" >> /opt/drycc/python/profile.d/python.sh \
-  # grafana plugin
+  # grafana plugins
   && mkdir ${DRYCC_HOME_DIR}/plugins \
-  && curl -sSL https://github.com/quickwit-oss/quickwit-datasource/releases/download/v0.4.6/quickwit-quickwit-datasource-0.4.6.zip -o quickwit.zip \
-  && unzip quickwit.zip -d ${DRYCC_HOME_DIR}/plugins \
-  && rm -rf quickwit.zip \
+  && grafana cli --pluginsDir=${DRYCC_HOME_DIR}/plugins --homepath=/opt/drycc/grafana plugins install grafana-llm-app \
+  && grafana cli --pluginsDir=${DRYCC_HOME_DIR}/plugins --homepath=/opt/drycc/grafana plugins install quickwit-quickwit-datasource \
+  # clean
   && rm -rf \
       /usr/share/doc \
       /usr/share/man \

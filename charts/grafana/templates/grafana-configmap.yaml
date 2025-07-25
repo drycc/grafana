@@ -37,9 +37,9 @@ data:
     app_mode = production
 
     [paths]
-    data = /var/lib/grafana
+    data = /opt/drycc/grafana/data
     home = /usr/share/grafana
-    logs = /var/log/grafana
+    logs = /opt/drycc/grafana/data/logs
     plugins = /usr/share/grafana/plugins
     provisioning = /usr/share/grafana/provisioning
 

@@ -82,12 +82,25 @@ async def sync_role(context: dict, token: dict, userinfo: dict):
     await init_org(org_id=context["org_id"], name=userinfo["preferred_username"])
 
 
-async def sync_folder(context: dict, token: dict, userinfo: dict):
+async def sync_default(context: dict, token: dict, userinfo: dict):
     async with httpx.AsyncClient() as client:
         await client.post(
             api_url("/api/folders"),
             headers=api_headers(context, userinfo),
             json={"uid": "drycc", "title": "drycc"},
+        )
+        await client.post(
+            api_url("/api/v1/provisioning/contact-points"),
+            headers=api_headers(context, userinfo),
+            json={
+                "uid": "grafana-default-email",
+                "name": "grafana-default-email",
+                "type": "email",
+                "settings": {
+                    "addresses": f"{userinfo["email"]}"
+                },
+                "disableResolveMessage": False
+            },
         )
 
 

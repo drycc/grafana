@@ -1133,7 +1133,7 @@
         {
           "datasource": null,
           "editorMode": "code",
-          "expr": "sum (rate (container_network_receive_bytes_total{image!=\"\",id!=\"\",pod=~\"^$Statefulset.*$\",namespace=\"${Namespace}\"}[2m])) by (pod)",
+          "expr": "sum (rate (container_network_receive_bytes_total{image!=\"\",id!=\"\",pod=~\"^$Deployment.*$\",pod=~\"^$Statefulset.*$\",namespace=\"${Namespace}\"}[2m])) by (pod)",
           "interval": "10s",
           "intervalFactor": 1,
           "legendFormat": "-> {{ pod }}",
@@ -1145,7 +1145,7 @@
         {
           "datasource": null,
           "editorMode": "code",
-          "expr": "- sum (rate (container_network_transmit_bytes_total{image!=\"\",id!=\"\",pod=~\"^$statefulset.*$\",namespace=\"${namespace}\"}[2m])) by (pod)",
+          "expr": "- sum (rate (container_network_transmit_bytes_total{image!=\"\",id!=\"\",pod=~\"^$Deployment.*$\",pod=~\"^$Statefulset.*$\",namespace=\"${Namespace}\"}[2m])) by (pod)",
           "interval": "10s",
           "intervalFactor": 1,
           "legendFormat": "<- {{ pod }}",

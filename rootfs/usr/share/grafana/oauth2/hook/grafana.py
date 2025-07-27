@@ -1,4 +1,5 @@
 import os
+import time
 import json
 import httpx
 from string import Template
@@ -83,25 +84,44 @@ async def sync_role(context: dict, token: dict, userinfo: dict):
 
 
 async def sync_default(context: dict, token: dict, userinfo: dict):
+    alertmanager_default_config = json.dumps({
+        "alertmanager_config": {
+            "route": {
+                "receiver": "grafana-default-email",
+                "group_by": ["grafana_folder", "alertname"]
+            },
+            "receivers": [{
+                "name": "grafana-default-email",
+                "grafana_managed_receiver_configs": [{
+                    "uid": "",
+                    "name": "email receiver",
+                    "type": "email",
+                    "settings": {
+                        "addresses": f"{userinfo["email"]}"
+                    }
+                }]
+            }]
+        }
+    })
     async with httpx.AsyncClient() as client:
         await client.post(
             api_url("/api/folders"),
             headers=api_headers(context, userinfo),
             json={"uid": "drycc", "title": "drycc"},
         )
-        await client.post(
-            api_url("/api/v1/provisioning/contact-points"),
-            headers=api_headers(context, userinfo),
-            json={
-                "uid": "grafana-default-email",
-                "name": "grafana-default-email",
-                "type": "email",
-                "settings": {
-                    "addresses": f"{userinfo["email"]}"
-                },
-                "disableResolveMessage": False
-            },
-        )
+    sql_tpl = f"""
+    INSERT INTO alert_configuration (
+        alertmanager_configuration, configuration_version, created_at, "default", org_id
+    )
+    VALUES (
+        '{alertmanager_default_config}', 'v1', {int(time.time())}, TRUE, {context["org_id"]}
+    )
+    ON CONFLICT (org_id) DO NOTHING;
+    """
+    async with await AsyncConnection.connect(os.environ.get("GF_DATABASE_URL")) as conn:
+        async with conn.cursor() as cursor:
+            await cursor.execute(sql_tpl)
+            await conn.commit()
 
 
 async def sync_alerting(context: dict, token: dict, userinfo: dict):

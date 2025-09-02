@@ -37,6 +37,39 @@ spec:
           - -u
           - $(GF_DATABASE_URL),http://drycc-controller-api
         {{- include "grafana.envs" . | indent 8 }}
+      - name: drycc-grafana-migrate
+        image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/grafana:{{.Values.imageTag}}
+        imagePullPolicy: {{.Values.imagePullPolicy}}
+        args:
+        - /usr/bin/env
+        - bash
+        - -ec
+        - |
+          set -m
+          echo "Configure Grafana live HA engine"
+          DRYCC_VALKEY_JSON=$(echo "$DRYCC_VALKEY_URL" | jq -R 'capture("^(?<scheme>redis[s]?)://(?<username>[^:]+)?(?::(?<password>[^@]+))?@(?<address>[^/]+)/?(?<db>[0-9]*)$")')
+          GF_LIVE_HA_ENGINE_ADDRESS=$(echo "${DRYCC_VALKEY_JSON}" |jq -r '.address')
+          GF_LIVE_HA_ENGINE_PASSWORD=$(echo "${DRYCC_VALKEY_JSON}" |jq -r '.password')
+          export GF_LIVE_HA_ENGINE_ADDRESS GF_LIVE_HA_ENGINE_PASSWORD
+          grafana server --config /usr/share/grafana/grafana.ini --homepath /opt/drycc/grafana &
+          GRAFANA_PID=$!
+          echo "Waiting for Grafana to come up..."
+          until curl -q --fail --output /dev/null --silent "http://localhost:3000/api/health"; do
+            printf "."
+            sleep 2
+          done
+          kill $GRAFANA_PID 2>/dev/null
+          wait $GRAFANA_PID 2>/dev/null
+        {{- include "grafana.envs" . | indent 8 }}
+        volumeMounts:
+        {{- if .Values.persistence.enabled }}
+        - name: grafana-data
+          mountPath: /var/lib/grafana
+        {{- end }}
+        - name: grafana-config
+          subPath: grafana.ini
+          readOnly: true
+          mountPath: /usr/share/grafana/grafana.ini
       containers:
       - name: drycc-grafana
         image: {{.Values.imageRegistry}}/{{.Values.imageOrg}}/grafana:{{.Values.imageTag}}

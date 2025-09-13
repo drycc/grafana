@@ -4,9 +4,9 @@ FROM registry.drycc.cc/drycc/base:${CODENAME}
 ENV DRYCC_UID=1001 \
   DRYCC_GID=1001 \
   DRYCC_HOME_DIR=/usr/share/grafana \
-  GRAFANA_VERSION="12.1.0" \
+  GRAFANA_VERSION="12.1.1" \
   JQ_VERSION="1.7.1" \
-  CADDY_VERSION="2.9.1" \
+  CADDY_VERSION="2.10.2" \
   PYTHON_VERSION="3.13"
 
 RUN groupadd drycc --gid ${DRYCC_GID} \

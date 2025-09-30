@@ -581,7 +581,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PF6837BEDE254B550"
+            "uid": "prometheus_on_drycc"
           },
           "editorMode": "code",
           "expr": "",
@@ -764,7 +764,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PF6837BEDE254B550"
+            "uid": "prometheus_on_drycc"
           },
           "editorMode": "code",
           "expr": "sum(rate(container_network_receive_bytes_total{namespace=~\"$app\"}[5m])) by (pod)",
@@ -871,7 +871,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PF6837BEDE254B550"
+            "uid": "prometheus_on_drycc"
           },
           "editorMode": "code",
           "expr": "sum(rate(container_network_transmit_bytes_total{namespace=~\"$app\"}[5m])) by (pod)",
@@ -992,7 +992,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PF6837BEDE254B550"
+            "uid": "prometheus_on_drycc"
           },
           "editorMode": "code",
           "expr": "sum(rate(container_fs_reads_bytes_total{namespace=~\"$app\",container!=\"\"}[1m])) by(pod)",

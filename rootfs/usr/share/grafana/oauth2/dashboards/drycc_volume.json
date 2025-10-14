@@ -103,7 +103,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(\n  sum without(instance, node) (kubelet_volume_stats_capacity_bytes{cluster=\"$cluster\", job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n  -\n  sum without(instance, node) (kubelet_volume_stats_available_bytes{cluster=\"$cluster\", job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n)\n",
+          "expr": "(\n  sum without(instance, node) (kubelet_volume_stats_capacity_bytes{namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n  -\n  sum without(instance, node) (kubelet_volume_stats_available_bytes{cluster=\"$cluster\",  namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n)\n",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Used Space",
@@ -112,7 +112,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "sum without(instance, node) (kubelet_volume_stats_available_bytes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n",
+          "expr": "sum without(instance, node) (kubelet_volume_stats_available_bytes{ namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Free Space",
@@ -191,7 +191,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "(\n  kubelet_volume_stats_capacity_bytes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n  -\n  kubelet_volume_stats_available_bytes{ job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n)\n/\nkubelet_volume_stats_capacity_bytes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n* 100\n",
+          "expr": "(\n  kubelet_volume_stats_capacity_bytes{ namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n  -\n  kubelet_volume_stats_available_bytes{  namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n)\n/\nkubelet_volume_stats_capacity_bytes{ namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n* 100\n",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -287,7 +287,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "sum without(instance, node) (kubelet_volume_stats_inodes_used{ job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n",
+          "expr": "sum without(instance, node) (kubelet_volume_stats_inodes_used{  namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": "Used inodes",
@@ -296,7 +296,7 @@
         },
         {
           "editorMode": "code",
-          "expr": "(\n  sum without(instance, node) (kubelet_volume_stats_inodes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n  -\n  sum without(instance, node) (kubelet_volume_stats_inodes_used{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n)\n",
+          "expr": "(\n  sum without(instance, node) (kubelet_volume_stats_inodes{ namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n  -\n  sum without(instance, node) (kubelet_volume_stats_inodes_used{ namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"})\n)\n",
           "format": "time_series",
           "intervalFactor": 1,
           "legendFormat": " Free inodes",
@@ -375,7 +375,7 @@
       "targets": [
         {
           "editorMode": "code",
-          "expr": "kubelet_volume_stats_inodes_used{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n/\nkubelet_volume_stats_inodes{job=\"kubernetes-apiservers\", namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n* 100\n",
+          "expr": "kubelet_volume_stats_inodes_used{ namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n/\nkubelet_volume_stats_inodes{ namespace=\"$namespace\", persistentvolumeclaim=\"$volume\"}\n* 100\n",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "",

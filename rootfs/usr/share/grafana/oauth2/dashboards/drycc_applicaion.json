@@ -574,7 +574,7 @@
           "expr": "(container_memory_working_set_bytes{namespace=~\"$app\",container!=\"\"}) \n",
           "hide": false,
           "interval": "",
-          "legendFormat": "Used Memory",
+          "legendFormat": "{{pod}}",
           "range": true,
           "refId": "A"
         },

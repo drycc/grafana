@@ -19,7 +19,7 @@ env:
       name: valkey-creds
       key: password
 - name: DRYCC_VALKEY_URL
-  value: "redis://:$(DRYCC_VALKEY_PASSWORD)@drycc-valkey:16379/0"
+  value: "redis://:$(DRYCC_VALKEY_PASSWORD)@drycc-valkey:16379/2"
 {{- end }}
 - name: DRYCC_SERVICE_KEY
   valueFrom:

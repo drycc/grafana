@@ -63,7 +63,8 @@ data:
     [users]
     allow_sign_up = false
     allow_org_create = false
-    auto_assign_org = false
+    auto_assign_org = true
+    auto_assign_org_role = None
     login_hint = email or username
 
     [auth]
@@ -102,12 +103,12 @@ data:
 
     [quota]
     enabled = true
-    org_user = 2
+    org_user = -1
     org_dashboard = 20
     org_data_source = 5
     org_api_key = 2
     org_alert_rule = 20
-    user_org = 2
+    user_org = -1
     alerting_rule_group_rules = 20
     alerting_rule_evaluation_results = 20
 

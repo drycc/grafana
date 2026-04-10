@@ -1,0 +1,11 @@
+apiVersion: 1
+
+contactPoints:
+  - orgId: 1
+    name: grafana-default-email
+    receivers:
+      - uid: grafana_default_email
+        name: email receiver
+        type: email
+        settings:
+          addresses: admin@drycc.cc

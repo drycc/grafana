@@ -2,7 +2,7 @@
     "name": "Prometheus on Drycc",
     "type": "prometheus",
     "uid": "prometheus_on_drycc",
-    "url": "${controller_url}/v2/prometheus/${username}",
+    "url": "${controller_url}/v2/prometheus/${workspace}",
     "access": "proxy",
     "isDefault": true,
     "basicAuth": false,

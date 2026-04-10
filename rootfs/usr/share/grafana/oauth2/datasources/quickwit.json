@@ -2,7 +2,7 @@
     "name": "Application Logs",
     "type": "quickwit-quickwit-datasource",
     "uid": "application_logs",
-    "url": "${controller_url}/v2/quickwit/${username}",
+    "url": "${controller_url}/v2/quickwit/${workspace}",
     "access": "proxy",
     "basicAuth": false,
     "jsonData": {

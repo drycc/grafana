@@ -5,13 +5,10 @@ datasources:
   access: proxy
   orgId: 1
   uid: application_logs
-  url: $DRYCC_QUICKWIT_URL
+  url: http://localhost:4000/proxy/quickwit/drycc
   jsonData:
-    httpHeaderName1: X-Drycc-Service-Key
     index: logs-*
     logMessageField: log
-  secureJsonData:
-    httpHeaderValue1: $DRYCC_SERVICE_KEY
   version: 1
   editable: false
 
@@ -20,12 +17,9 @@ datasources:
   access: proxy
   orgId: 1
   uid: prometheus_on_drycc
-  url: $DRYCC_VICTORIAMETRICS_URL
+  url: http://localhost:4000/proxy/prometheus/drycc
   isDefault: true
   jsonData:
     httpMethod: POST
-    httpHeaderName1: X-Drycc-Service-Key
-  secureJsonData:
-    httpHeaderValue1: $DRYCC_SERVICE_KEY
   version: 1
   editable: false

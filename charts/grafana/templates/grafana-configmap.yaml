@@ -15,6 +15,14 @@ data:
       }
     }
     :80 {
+      # For security reasons, deny external access to internal endpoints.
+      handle /proxy/* {
+        respond "Not Found" 404
+      }
+      handle /alerts/* {
+        respond "Not Found" 404
+      }
+
       handle /oauth2/* {
         reverse_proxy 127.0.0.1:4000
       }

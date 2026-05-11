@@ -25,10 +25,6 @@ spec:
     port: 9094
     targetPort: alerting
     protocol: UDP
-  - name: oauth2-tcp
-    port: 4000
-    targetPort: oauth2
-    protocol: TCP
   - name: proxy-tcp
     port: 80
     targetPort: proxy

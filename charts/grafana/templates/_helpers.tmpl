@@ -21,11 +21,6 @@ env:
 - name: DRYCC_VALKEY_URL
   value: "redis://:$(DRYCC_VALKEY_PASSWORD)@drycc-valkey:16379/2"
 {{- end }}
-- name: DRYCC_SERVICE_KEY
-  valueFrom:
-    secretKeyRef:
-      name: controller-creds
-      key: service-key
 - name: "DRYCC_CONTROLLER_URL"
   value: http://drycc-controller-api
 - name: "DRYCC_QUICKWIT_URL"
@@ -49,6 +44,11 @@ env:
     secretKeyRef:
       name: passport-creds
       key: drycc-passport-grafana-secret
+- name: DRYCC_PASSPORT_SCOPES
+  valueFrom:
+    secretKeyRef:
+      name: passport-creds
+      key: drycc-passport-grafana-scopes
 {{- else }}
 - name: DRYCC_PASSPORT_URL
   value: "{{ .Values.passportUrl }}"
@@ -56,6 +56,8 @@ env:
   value: "{{ .Values.passportKey }}"
 - name: DRYCC_PASSPORT_SECRET
   value: "{{ .Values.passportSecret }}"
+- name: DRYCC_PASSPORT_SCOPES
+  value: "{{ .Values.passportScopes }}"
 {{- end }}
 - name: GF_DATABASE_TYPE
   value: postgres

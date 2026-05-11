@@ -1,17 +1,16 @@
 import logging
-import os
 import time
 import json
 import httpx
+from pathlib import Path
 from string import Template
 from psycopg import AsyncConnection
+from settings import settings
 
 logger = logging.getLogger(__name__)
 
 DEFAULT_HEADERS = {"Content-Type": "application/json"}
-DRYCC_CONTROLLER_URL = os.environ.get('DRYCC_CONTROLLER_URL')
-DRYCC_GRAFANA_REFRESH = os.environ.get('DRYCC_GRAFANA_REFRESH', '60s')
-DRYCC_GRAFANA_DASHBOARD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../")
+DRYCC_GRAFANA_DASHBOARD = Path(__file__).resolve().parent.parent
 
 # Drycc Workspace role to Grafana role mapping
 DRYCC_WORKSPACE_ROLE_MAPPING = {"admin": "Editor", "member": "Editor", "viewer": "Viewer"}
@@ -36,6 +35,55 @@ async def init_org(org_id=DRYCC_ORG_ID, name="drycc"):
         )
 
 
+async def has_changed(token: dict, userinfo: dict) -> bool:
+    """Detect drift between the cached userinfo / Grafana org state and the
+    live state in passport and the controller.
+
+    Returns True when:
+      * any tracked userinfo field differs from passport's response, or
+      * the user's controller workspace membership count differs from the
+        number of workspace orgs they currently belong to in Grafana, or
+      * any workspace's mapped Grafana role differs from the role the user
+        currently has on the matching Grafana org.
+    Returns False when everything matches.
+    """
+    access_token = token.get("access_token")
+    passport_headers = {"Authorization": f"Bearer {access_token}"}
+
+    async with httpx.AsyncClient() as client:
+        passport_resp = await client.get(
+            settings.passport_userinfo_url, headers=passport_headers)
+        passport_resp.raise_for_status()
+        passport_userinfo = passport_resp.json()
+
+        for field in ("preferred_username", "email", "is_superuser", "is_staff"):
+            if userinfo.get(field) != passport_userinfo.get(field):
+                return True
+
+        workspaces = await _get_workspaces(access_token)
+        live_roles: dict[str, str] = {}
+        for ws in workspaces:
+            ws_name = ws["name"]
+            members = await _get_workspace_members(ws_name, access_token)
+            user_member = next(
+                (m for m in members if m["user"] == userinfo["preferred_username"]), None)
+            if user_member is None:
+                continue
+            live_roles[ws_name] = DRYCC_WORKSPACE_ROLE_MAPPING.get(
+                user_member["role"], "Viewer")
+
+        grafana_resp = await client.get(
+            _api_url("/api/user/orgs"), headers=_api_headers({}, userinfo))
+        grafana_resp.raise_for_status()
+        grafana_roles = {
+            org["name"]: org["role"]
+            for org in grafana_resp.json()
+            if org["name"] != "drycc"
+        }
+
+    return live_roles != grafana_roles
+
+
 async def sync_user(context: dict, token: dict, userinfo: dict):
     async with httpx.AsyncClient() as client:
         resp = await client.get(_api_url("/api/user"), headers=_api_headers(context, userinfo))
@@ -51,11 +99,10 @@ async def sync_user(context: dict, token: dict, userinfo: dict):
 
 async def sync_role(context: dict, token: dict, userinfo: dict):
     """Sync user's Grafana Org memberships based on their workspace memberships."""
-    created, drycc_token = await _get_or_create_drycc_token(
-        userinfo["preferred_username"], token)
-    context["drycc_token"] = drycc_token
+    access_token = token.get("access_token")
+    context["access_token"] = access_token
 
-    workspace_orgs = await _build_workspace_orgs(userinfo, drycc_token)
+    workspace_orgs = await _build_workspace_orgs(userinfo, access_token)
 
     async with httpx.AsyncClient() as client:
         resp = await client.get(
@@ -76,18 +123,16 @@ async def sync_role(context: dict, token: dict, userinfo: dict):
 async def sync_default(context: dict, token: dict, userinfo: dict):
     """Create default folder and alert configuration for each workspace org.
 
-    The email receiver addresses are fully rebuilt each time based on
-    all workspace members with alerts=True, ensuring stale entries are removed.
+    Each workspace org gets a webhook contact point pointing back to this
+    service's /alerts/webhook endpoint, which fans out to passport messages
+    for workspace members with alerts=True.
     """
     workspace_orgs = context.get("workspace_orgs", {})
-    drycc_token = context.get("drycc_token")
 
     for ws_name, ws_info in workspace_orgs.items():
         org_id = ws_info["org_id"]
-        alerts = ws_info["alerts"]
 
-        alert_addresses = await _build_alert_addresses(ws_name, drycc_token, userinfo, alerts)
-        alertmanager_config = _build_alertmanager_config(alert_addresses)
+        alertmanager_config = _build_alertmanager_config(ws_name)
 
         ctx = {**context, "org_id": org_id}
         async with httpx.AsyncClient() as client:
@@ -107,15 +152,15 @@ async def sync_alerting(context: dict, token: dict, userinfo: dict):
     The alerts field only controls notification channels (handled in sync_default).
     """
     workspace_orgs = context.get("workspace_orgs", {})
-    alerting_path = os.path.join(os.path.dirname(__file__), "..", "alerting")
+    alerting_path = Path(__file__).resolve().parent.parent / "alerting"
 
-    for ws_name, ws_info in workspace_orgs.items():
+    for _, ws_info in workspace_orgs.items():
         org_id = ws_info["org_id"]
         ctx = {**context, "org_id": org_id}
 
         async with httpx.AsyncClient() as client:
-            for filename in os.listdir(alerting_path):
-                with open(os.path.join(alerting_path, filename)) as f:
+            for filepath in alerting_path.glob("*.json"):
+                with filepath.open() as f:
                     rule = json.load(f)
                 # Use PUT for idempotent upsert (POST would create duplicates)
                 resp = await client.put(
@@ -133,38 +178,47 @@ async def sync_alerting(context: dict, token: dict, userinfo: dict):
 
 
 async def sync_datasources(context: dict, token: dict, userinfo: dict):
-    """Create datasources for each workspace org with workspace-specific URLs."""
+    """Create datasources for each workspace org with workspace-specific URLs.
+
+    Datasource creation requires Org Admin permission. Workspace users are
+    only Editor/Viewer, so we must use Grafana admin basic auth combined with
+    X-Grafana-Org-Id to write into the target workspace org.
+    """
     workspace_orgs = context.get("workspace_orgs", {})
-    datasources_path = os.path.join(os.path.dirname(__file__), "..", "datasources")
-    drycc_token = context.get("drycc_token")
+    datasources_path = Path(__file__).resolve().parent.parent / "datasources"
 
     for ws_name, ws_info in workspace_orgs.items():
         org_id = ws_info["org_id"]
-        ctx = {**context, "org_id": org_id}
-        headers = _api_headers(ctx, userinfo)
+        headers = {
+            "Content-Type": "application/json",
+            "X-Grafana-Org-Id": str(org_id),
+        }
 
         async with httpx.AsyncClient() as client:
-            for filename in os.listdir(datasources_path):
-                with open(os.path.join(datasources_path, filename)) as f:
+            for filepath in datasources_path.glob("*.json"):
+                with filepath.open() as f:
                     template = Template(f.read())
                     datasource = json.loads(template.substitute(
-                        controller_url=DRYCC_CONTROLLER_URL,
+                        controller_url=settings.controller_base_url,
+                        time_interval=settings.drycc_grafana_refresh,
                         workspace=ws_name,
-                        time_interval=DRYCC_GRAFANA_REFRESH,
-                        token=drycc_token
                     ))
                     resp = await client.get(
-                        _api_url(f"/api/datasources/name/{datasource['name']}"), headers=headers)
+                        _api_url(f"/api/datasources/name/{datasource['name']}", is_admin=True),
+                        headers=headers)
                     if resp.status_code == 200:
                         existing = resp.json()
                         datasource["id"] = existing["id"]
                         datasource["version"] = existing["version"]
-                        await client.put(
-                            _api_url(f"/api/datasources/uid/{datasource['uid']}"),
+                        resp = await client.put(
+                            _api_url(f"/api/datasources/uid/{datasource['uid']}", is_admin=True),
                             headers=headers, json=datasource)
+                        resp.raise_for_status()
                     elif resp.status_code == 404:
-                        await client.post(
-                            _api_url("/api/datasources"), headers=headers, json=datasource)
+                        resp = await client.post(
+                            _api_url("/api/datasources", is_admin=True),
+                            headers=headers, json=datasource)
+                        resp.raise_for_status()
                     else:
                         raise ValueError(
                             f"grafana returned an unexpected status: {resp.status_code}"
@@ -174,17 +228,17 @@ async def sync_datasources(context: dict, token: dict, userinfo: dict):
 async def sync_dashboards(context: dict, token: dict, userinfo: dict):
     """Create dashboards for each workspace org."""
     workspace_orgs = context.get("workspace_orgs", {})
-    dashboards_path = os.path.join(os.path.dirname(__file__), "..", "dashboards")
+    dashboards_path = Path(__file__).resolve().parent.parent / "dashboards"
 
     for ws_name, ws_info in workspace_orgs.items():
         org_id = ws_info["org_id"]
         ctx = {**context, "org_id": org_id}
 
         async with httpx.AsyncClient() as client:
-            for filename in os.listdir(dashboards_path):
-                with open(os.path.join(dashboards_path, filename)) as f:
+            for filepath in dashboards_path.glob("*.json"):
+                with filepath.open() as f:
                     dashboard = json.load(f)
-                    dashboard.update({"id": None, "refresh": DRYCC_GRAFANA_REFRESH})
+                    dashboard.update({"id": None, "refresh": settings.drycc_grafana_refresh})
                     await client.post(
                         _api_url("/api/dashboards/db"),
                         headers=_api_headers(ctx, userinfo),
@@ -202,12 +256,12 @@ async def sync_dashboards(context: dict, token: dict, userinfo: dict):
 def _api_url(url_path, is_admin=False):
     if is_admin:
         return "http://{}:{}@localhost:{}{}".format(
-            os.environ.get('GF_SECURITY_ADMIN_USER'),
-            os.environ.get('GF_SECURITY_ADMIN_PASSWORD'),
-            os.environ.get('GF_SERVER_HTTP_PORT', 3000),
-            url_path,
+            settings.gf_security_admin_user,
+            settings.gf_security_admin_password,
+            settings.gf_server_http_port,
+            url_path
         )
-    return "http://localhost:{}{}".format(os.environ.get('GF_SERVER_HTTP_PORT', 3000), url_path)
+    return "http://localhost:{}{}".format(settings.gf_server_http_port, url_path)
 
 
 def _api_headers(context: dict, userinfo):
@@ -228,22 +282,22 @@ def _get_drycc_role(userinfo: dict) -> str | None:
     return None
 
 
-async def _get_workspaces(drycc_token: str) -> list:
+async def _get_workspaces(access_token: str) -> list:
     """Call Controller API to get user's workspaces."""
-    headers = {"Authorization": f"Token {drycc_token}"}
+    headers = {"Authorization": f"Bearer {access_token}"}
     async with httpx.AsyncClient() as client:
         resp = await client.get(
-            f"{DRYCC_CONTROLLER_URL}/v2/workspaces", headers=headers)
+            f"{settings.controller_base_url}/v2/workspaces", headers=headers)
         resp.raise_for_status()
         return resp.json().get("results", [])
 
 
-async def _get_workspace_members(workspace_name: str, drycc_token: str) -> list:
+async def _get_workspace_members(workspace_id: str, access_token: str) -> list:
     """Call Controller API to get workspace members."""
-    headers = {"Authorization": f"Token {drycc_token}"}
+    headers = {"Authorization": f"Bearer {access_token}"}
     async with httpx.AsyncClient() as client:
         resp = await client.get(
-            f"{DRYCC_CONTROLLER_URL}/v2/workspaces/{workspace_name}/members",
+            f"{settings.controller_base_url}/v2/workspaces/{workspace_id}/members",
             headers=headers)
         resp.raise_for_status()
         return resp.json().get("results", [])
@@ -271,37 +325,34 @@ async def _get_or_create_org(name: str) -> int:
         return resp.json()["orgId"]
 
 
-async def _build_workspace_orgs(userinfo: dict, drycc_token: str) -> dict:
+async def _build_workspace_orgs(userinfo: dict, access_token: str) -> dict:
     """Build workspace org info by fetching workspaces and their memberships.
 
-    Returns: {workspace_name: {"org_id": int, "role": str, "alerts": bool, "email": str}}
+    Returns: {workspace_id: {"org_id": int, "role": str}}
     """
     workspace_orgs = {}
     try:
-        workspaces = await _get_workspaces(drycc_token)
+        workspaces = await _get_workspaces(access_token)
     except httpx.HTTPError as e:
         logger.warning("Failed to fetch workspaces for %s: %s", userinfo["preferred_username"], e)
         return workspace_orgs
 
     for ws in workspaces:
-        workspace_name = ws["name"]
-        workspace_email = ws.get("email", userinfo["email"])
+        workspace_id = ws["id"]
         try:
-            members = await _get_workspace_members(workspace_name, drycc_token)
+            members = await _get_workspace_members(workspace_id, access_token)
         except httpx.HTTPError as e:
-            logger.warning("Failed to fetch members for workspace %s: %s", workspace_name, e)
+            logger.warning("Failed to fetch members for workspace %s: %s", workspace_id, e)
             continue
         user_member = next(
             (m for m in members if m["user"] == userinfo["preferred_username"]), None)
         if user_member is None:
             continue
 
-        org_id = await _get_or_create_org(workspace_name)
-        workspace_orgs[workspace_name] = {
+        org_id = await _get_or_create_org(workspace_id)
+        workspace_orgs[workspace_id] = {
             "org_id": org_id,
             "role": user_member["role"],
-            "alerts": user_member.get("alerts", True),
-            "email": workspace_email,
         }
     return workspace_orgs
 
@@ -375,42 +426,23 @@ async def _sync_drycc_org(
         )
 
 
-async def _build_alert_addresses(
-    ws_name: str, drycc_token: str, userinfo: dict, alerts: bool
-) -> str:
-    """Build comma-separated alert email addresses for a workspace."""
-    if drycc_token:
-        try:
-            members = await _get_workspace_members(ws_name, drycc_token)
-            email_list = [m["email"] for m in members if m.get("alerts", True)]
-            return ",".join(email_list)
-        except httpx.HTTPError as e:
-            logger.warning("Failed to fetch members for alert addresses in %s: %s", ws_name, e)
-            return userinfo["email"] if alerts else ""
-    return userinfo["email"] if alerts else ""
-
-
-def _build_alertmanager_config(alert_addresses: str) -> str:
-    """Build alertmanager JSON config string."""
-    if alert_addresses:
-        receivers = [{
-            "name": "grafana-default-email",
-            "grafana_managed_receiver_configs": [{
-                "uid": "",
-                "name": "email receiver",
-                "type": "email",
-                "settings": {"addresses": alert_addresses}
-            }]
-        }]
-    else:
-        receivers = [{
-            "name": "grafana-default-email",
-            "grafana_managed_receiver_configs": []
-        }]
+def _build_alertmanager_config(ws_name: str) -> str:
+    receivers = [{
+        "name": "controller-alerts",
+        "grafana_managed_receiver_configs": [{
+            "uid": "",
+            "name": "controller alerts webhook",
+            "type": "webhook",
+            "settings": {
+                "url": f"http://localhost:4000/alerts/webhook?workspace={ws_name}",
+                "httpMethod": "POST",
+            },
+        }],
+    }]
     return json.dumps({
         "alertmanager_config": {
             "route": {
-                "receiver": "grafana-default-email",
+                "receiver": "controller-alerts",
                 "group_by": ["grafana_folder", "alertname"]
             },
             "receivers": receivers
@@ -420,7 +452,7 @@ def _build_alertmanager_config(alert_addresses: str) -> str:
 
 async def _upsert_alert_configuration(org_id: int, config: str):
     """Insert or update alert configuration for an org using parameterized query."""
-    async with await AsyncConnection.connect(os.environ.get("GF_DATABASE_URL")) as conn:
+    async with await AsyncConnection.connect(settings.gf_database_url) as conn:
         async with conn.cursor() as cursor:
             await cursor.execute(
                 """
@@ -435,40 +467,3 @@ async def _upsert_alert_configuration(org_id: int, config: str):
                 (config, "v1", int(time.time()), True, org_id),
             )
             await conn.commit()
-
-
-async def _get_or_create_drycc_token(username, token: dict):
-    async def _check_or_create_drycc_token(drycc_token, token):
-        async with httpx.AsyncClient() as client:
-            created = False if drycc_token else True
-            if drycc_token:
-                headers = {"Authorization": f"Token {drycc_token}"}
-                resp = await client.get(
-                    f"{DRYCC_CONTROLLER_URL}/v2/auth/whoami", headers=headers)
-                if resp.status_code in [401, 403]:
-                    created = True
-            if created:
-                headers = {"Authorization": f"Bearer {token['access_token']}"}
-                data = (await client.post(
-                    f"{DRYCC_CONTROLLER_URL}/v2/auth/token/?alias=grafana-datasource",
-                    headers=headers, json=token)).json()
-                drycc_token = data["token"]
-            return created, drycc_token
-
-    async with await AsyncConnection.connect(os.environ.get("GF_DATABASE_URL")) as conn:
-        async with conn.cursor() as cursor:
-            await cursor.execute(
-                "SELECT o_auth_id_token FROM user_auth WHERE auth_module=%s AND auth_id=%s",
-                ("authproxy", username)
-            )
-            row = await cursor.fetchone()
-            drycc_token = row[0] if row else None
-        created, drycc_token = await _check_or_create_drycc_token(drycc_token, token)
-        if created:
-            async with conn.cursor() as cursor:
-                await cursor.execute(
-                    "UPDATE user_auth SET o_auth_id_token=%s WHERE auth_module=%s AND auth_id=%s",
-                    (drycc_token, "authproxy", username)
-                )
-                await conn.commit()
-        return created, drycc_token

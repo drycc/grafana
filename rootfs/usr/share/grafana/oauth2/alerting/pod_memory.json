@@ -75,7 +75,7 @@
   },
   "isPaused": false,
   "notification_settings": {
-    "receiver": "grafana-default-email"
+    "receiver": "controller-alerts"
   },
   "folderUID": "drycc"
 }

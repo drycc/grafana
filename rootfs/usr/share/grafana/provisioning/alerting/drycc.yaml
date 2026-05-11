@@ -57,7 +57,7 @@ groups:
           summary: Pod restart alert
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: deq6i5dvnlkw0e
         title: pod cpu usage over 80%
         condition: C
@@ -109,7 +109,7 @@ groups:
           summary: CPU Usage of Pod limit on has exceeded 80%.
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: beq6l7fts9nnke
         title: pod memory usage over 80%
         condition: C
@@ -162,7 +162,7 @@ groups:
           summary: Memory Usage of Pod limit  on  has exceeded 80%.
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: eeq6lm6biyfb4e
         title: pod start fail
         condition: C
@@ -214,7 +214,7 @@ groups:
           summary: Pod start fail
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: feq6m6yr27togc
         title: job exec error
         condition: C
@@ -266,7 +266,7 @@ groups:
           summary: Job exec error
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: beqhp6i29jx8gb
         title: pvc usage over 80%
         condition: C
@@ -318,7 +318,7 @@ groups:
           summary: Pvc usage over 80%
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: deqhpblphb7k0c
         title: mysql down
         condition: C
@@ -370,7 +370,7 @@ groups:
           summary: MySQL not up.
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: feqhpe2zz56o0d
         title: mysql group replcation down
         condition: C
@@ -422,7 +422,7 @@ groups:
           summary: MySQL group replication not up.
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
   - orgId: 1
     name: high
     folder: drycc
@@ -479,7 +479,7 @@ groups:
           summary: Node down
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: eeq6lu5wz3eo0c
         title: cluster node over pressure
         condition: C
@@ -531,7 +531,7 @@ groups:
           summary: Cluster node over pressure
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: deq6lwic91slce
         title: cluster node status error
         condition: C
@@ -583,7 +583,7 @@ groups:
           summary: Cluster node status error
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
   - orgId: 1
     name: middle
     folder: drycc
@@ -640,7 +640,7 @@ groups:
           summary: Node cpu high over 80
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: ceqhohsqqyr5sb
         title: node memory usage over 80%
         condition: C
@@ -692,7 +692,7 @@ groups:
           summary: Node memory over 80
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
       - uid: aeqhp0wbcsb9cf
         title: node systen disk usage over 80%
         condition: C
@@ -744,7 +744,7 @@ groups:
           summary: Node systen disk usage over 80
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts
   - orgId: 1
     name: slow
     folder: drycc
@@ -800,4 +800,4 @@ groups:
           summary: Node certificate expiration
         isPaused: false
         notification_settings:
-          receiver: grafana-default-email
+          receiver: controller-alerts

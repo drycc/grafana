@@ -2,10 +2,11 @@ apiVersion: 1
 
 contactPoints:
   - orgId: 1
-    name: grafana-default-email
+    name: controller-alerts
     receivers:
-      - uid: grafana_default_email
-        name: email receiver
-        type: email
+      - uid: controller_alerts
+        name: controller alerts webhook
+        type: webhook
         settings:
-          addresses: admin@drycc.cc
+          url: http://localhost:4000/alerts/webhook?workspace=drycc
+          httpMethod: POST

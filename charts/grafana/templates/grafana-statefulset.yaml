@@ -158,6 +158,7 @@ spec:
           done
           echo "Grafana is up and running."
           python3 oauth2/main.py \
+            --bind 127.0.0.1 \
             --port 4000 \
             --client-id $(DRYCC_PASSPORT_KEY) \
             --client-secret $(DRYCC_PASSPORT_SECRET) \
@@ -167,32 +168,42 @@ spec:
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
-        ports:
-        - containerPort: 4000
-          name: oauth2
         {{- include "grafana.envs" . | indent 8 }}
         {{- if not .Values.diagnosticMode.enabled }}
         livenessProbe:
-          tcpSocket:
-            port: oauth2
+          exec:
+            command:
+            - curl
+            - -fsS
+            - -o
+            - /dev/null
+            - http://127.0.0.1:4000/oauth2/healthz
           initialDelaySeconds: 240
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 6
           successThreshold: 1
         readinessProbe:
-          httpGet:
-            path: /oauth2/healthz
-            port: oauth2
+          exec:
+            command:
+            - curl
+            - -fsS
+            - -o
+            - /dev/null
+            - http://127.0.0.1:4000/oauth2/healthz
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
           failureThreshold: 6
           successThreshold: 1
         startupProbe:
-          httpGet:
-            path: /oauth2/healthz
-            port: oauth2
+          exec:
+            command:
+            - curl
+            - -fsS
+            - -o
+            - /dev/null
+            - http://127.0.0.1:4000/oauth2/healthz
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5

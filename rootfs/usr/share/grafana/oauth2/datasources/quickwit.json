@@ -2,15 +2,11 @@
     "name": "Application Logs",
     "type": "quickwit-quickwit-datasource",
     "uid": "application_logs",
-    "url": "${controller_url}/v2/quickwit/${workspace}",
+    "url": "http://localhost:4000/proxy/quickwit/${workspace}",
     "access": "proxy",
     "basicAuth": false,
     "jsonData": {
-        "httpHeaderName1": "Authorization",
         "index": "logs-*",
         "logMessageField": "log"
-    },
-    "secureJsonData": {
-        "httpHeaderValue1": "Token ${token}"
     }
 }

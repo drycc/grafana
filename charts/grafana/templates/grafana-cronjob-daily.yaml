@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: drycc-grafana-token-refresher
+  labels:
+    app: drycc-grafana
+    component: token-refresher
+    heritage: drycc
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 3
+      template:
+        metadata:
+          labels:
+            app: drycc-grafana
+            component: token-refresher
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: token-refresher
+            image: {{ .Values.imageRegistry }}/{{ .Values.imageOrg }}/grafana:{{ .Values.imageTag }}
+            imagePullPolicy: {{ .Values.imagePullPolicy }}
+            command: ["/usr/bin/env", "python3", "/usr/share/grafana/oauth2/credentials.py"]
+            {{- include "grafana.envs" . | indent 12 }}

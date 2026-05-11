@@ -4,7 +4,7 @@ FROM registry.drycc.cc/drycc/base:${CODENAME}
 ARG DRYCC_UID=1001 \
   DRYCC_GID=1001 \
   DRYCC_HOME_DIR=/usr/share/grafana \
-  GRAFANA_VERSION="12.4.2" \
+  GRAFANA_VERSION="13.0.1" \
   JQ_VERSION="1.7.1" \
   CADDY_VERSION="2.11.2" \
   PYTHON_VERSION="3.14"

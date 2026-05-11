@@ -77,7 +77,7 @@
   "keep_firing_for": "2m",
   "noDataState": "OK",
   "notification_settings": {
-    "receiver": "grafana-default-email"
+    "receiver": "controller-alerts"
   },
   "orgID": 1,
   "record": null,

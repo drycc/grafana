@@ -64,10 +64,11 @@ environment: {}
 valkeyUrl: ""
 ## databaseUrl are will no longer use the built-in database component
 databaseUrl: ""
-# The passportUrl, passportKey and passportSecret are will no longer use the built-in passport component
+# The following parameters are used when passport.enabled is false
 passportUrl: ""
 passportKey: ""
 passportSecret: ""
+passportScopes: ""
 # victoriametricsUrl is will no longer use the built-in victoriametrics component
 victoriametricsUrl: ""
 

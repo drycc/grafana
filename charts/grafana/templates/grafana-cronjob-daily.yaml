@@ -25,5 +25,10 @@ spec:
           - name: token-refresher
             image: {{ .Values.imageRegistry }}/{{ .Values.imageOrg }}/grafana:{{ .Values.imageTag }}
             imagePullPolicy: {{ .Values.imagePullPolicy }}
-            command: ["/usr/bin/env", "python3", "/usr/share/grafana/oauth2/credentials.py"]
+            args:
+            - /usr/bin/env
+            - bash
+            - -ec
+            - |
+              python3 /usr/share/grafana/oauth2/credentials.py
             {{- include "grafana.envs" . | indent 12 }}
